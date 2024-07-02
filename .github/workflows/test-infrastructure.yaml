@@ -24,18 +24,19 @@ jobs:
       environment: ${{ steps.set-environment.outputs.environment }}
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Set environment
         id: set-environment
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            echo "::set-output name=environment::${{ github.event.inputs.environment }}"
+            echo "environment=${{ inputs.environment }}" >> $GITHUB_OUTPUT
           else
             if git diff --name-only origin/main...HEAD | grep -q 'terraform/cluster-creation/prod\|terraform/application/prod'; then
-              echo "::set-output name=environment::prod"
+              echo "environment=prod" >> $GITHUB_OUTPUT
             else
               echo "::set-output name=environment::dev"
+              echo "environment=dev" >> $GITHUB_OUTPUT
             fi
           fi
   
@@ -47,15 +48,18 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v1
+
       - name: Create Cluster
         id: create-cluster
-        uses: ./.github/actions/create-cluster.yaml
+        uses: ./.github/actions/create-cluster
         with:
           clusterName: ${{ vars.CLUSTER_NAME }}
 
       - name: Create Application
         id: create-application
-        uses: ./.github/actions/create-application.yaml
+        uses: ./.github/actions/create-application
         with:
           kubeconfigContent: ${{ steps.create-cluster.outputs.kubeconfigContent }}
 
@@ -67,12 +71,12 @@ jobs:
 
       - name: Destroy Application
         if: always()
-        uses: ./.github/actions/destroy-application.yaml
+        uses: ./.github/actions/destroy-application
         with:
           kubeconfigContent: ${{ steps.create-cluster.outputs.kubeconfigContent }}
 
       - name: Destroy Cluster
         if: always()
-        uses: ./.github/actions/destroy-cluster.yaml
+        uses: ./.github/actions/destroy-cluster
         with:
           clusterName: ${{ vars.CLUSTER_NAME }}
