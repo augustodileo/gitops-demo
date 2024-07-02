@@ -1,0 +1,52 @@
+name: Deploy Infrastructure
+
+#on:
+#  push:
+#    branches:
+#      - main
+#    paths:
+#      - 'terraform/**'
+
+jobs:
+  set-environment:
+    runs-on: ubuntu-latest
+    outputs:
+      environment: ${{ steps.set-environment.outputs.environment }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set environment
+        id: set-environment
+        run: |
+          if git diff --name-only origin/main...HEAD | grep -q 'terraform/cluster-creation/prod\|terraform/application/prod'; then
+            echo "::set-output name=environment::prod"
+          else
+            echo "::set-output name=environment::dev"
+          fi
+  
+  deployment:
+    needs: set-environment
+    runs-on: ubuntu-latest
+    environment: ${{ needs.set-environment.outputs.environment }}
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Create Cluster
+        id: create-cluster
+        uses: ./.github/actions/create-cluster.yaml
+        with:
+          clusterName: ${{ inputs.clusterName }}
+
+      - name: Create Application
+        id: create-application
+        uses: ./.github/actions/create-application.yaml
+        with:
+          kubeconfigContent: ${{ steps.create-cluster.outputs.kubeconfigContent }}
+
+      - name: Run tests
+        id: run-tests
+        run: kubectl get pods -n default
+        env:
+          KUBECONFIG: ${{ steps.create-cluster.outputs.kubeconfigContent }}

@@ -11,7 +11,17 @@ resource "kind_cluster" "default" {
     }
 
     node {
-      role  = "worker"
+      role = "worker"
+      image = "kindest/node:v1.23.4"
+    }
+
+    node {
+      role = "worker"
+      image = "kindest/node:v1.23.4"
+    }
+
+    node {
+      role = "worker"
       image = "kindest/node:v1.23.4"
     }
   }

@@ -1,0 +1,31 @@
+name: 'Terraform Application Creation'
+description: 'Initialize and apply Terraform configuration for application deployment'
+
+inputs:
+  kubeconfigContent:
+    description: 'Kubeconfig content'
+    required: true
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Write Kubeconfig to file
+      run: echo "${{ inputs.kubeconfigContent }}" > ./kubeconfig-${{ github.environment }}.yaml
+
+    - name: Terraform Init
+      run: |
+        terraform init \
+          -backend-config="bucket=${{ vars.AWS_BUCKET }}" \
+          -backend-config="key=${{ env.BACKEND_KEY }}" \
+          -backend-config="region=${{ vars.AWS_REGION }}" \
+          -backend-config="dynamodb_table=${{ vars.AWS_DYNAMODB_TABLE }}"
+      env:
+        BACKEND_KEY: "gitops-demo/${{ github.environment }}/${{ github.ref_name }}/application-key.tfstate"
+      working-directory: terraform/application/${{ github.environment }}
+
+    - name: Terraform Apply
+      run: terraform apply -auto-approve -var "kubeconfig_path=./kubeconfig-${{ github.environment }}.yaml"
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      working-directory: terraform/application/${{ github.environment }}

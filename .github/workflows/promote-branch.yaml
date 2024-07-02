@@ -1,0 +1,41 @@
+name: Promote Branch
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  create-promotion-pr:
+    if: ${{ github.event.pull_request.merged == true }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Git
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions@github.com"
+
+      - name: Create promotion branch
+        run: |
+          BRANCH_NAME=$(echo "${{ github.event.pull_request.head.ref }}" | sed 's/[^a-zA-Z0-9]/-/g')
+          PROMOTE_BRANCH="promote-${BRANCH_NAME}"
+          git checkout -b ${PROMOTE_BRANCH}
+
+      - name: Copy files from dev to prod
+        run: |
+          cp -r terraform/application/dev/* terraform/application/prod/
+          cp -r terraform/cluster/dev/* terraform/cluster/prod/
+          
+      - name: Commit and push changes
+        run: |
+          git add terraform/application/prod/* terraform/cluster/prod/*
+          git commit -m "Promote ${BRANCH_NAME} to prod"
+          git push origin ${PROMOTE_BRANCH}
+
+      - name: Create PR
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create --title "Promote ${BRANCH_NAME} to prod" --body "This PR promotes changes from ${BRANCH_NAME} to prod" --base main --head ${PROMOTE_BRANCH}
