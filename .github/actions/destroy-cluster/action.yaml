@@ -19,10 +19,15 @@ runs:
       env:
         BACKEND_KEY: "gitops-demo/${{ github.environment }}/${{ github.ref_name }}/cluster.tfstate"
       working-directory: terraform/cluster-creation/${{ github.environment }}
+      shell: bash
 
     - name: Terraform Destroy
-      run: terraform destroy -auto-approve -var="cluster_name=${{ inputs.clusterName }}"
+      run: |
+        terraform destroy \
+          -auto-approve \
+          -var="cluster_name=${{ inputs.clusterName }}"
       env:
         AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
       working-directory: terraform/cluster-creation/${{ github.environment }}
+      shell: bash

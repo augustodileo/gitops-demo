@@ -10,7 +10,9 @@ runs:
   using: 'composite'
   steps:
     - name: Write Kubeconfig to file
-      run: echo "${{ inputs.kubeconfigContent }}" > ./kubeconfig-${{ github.environment }}.yaml
+      run: |
+        echo "${{ inputs.kubeconfigContent }}" > ./kubeconfig-${{ github.environment }}.yaml
+      shell: bash
 
     - name: Terraform Init
       run: |
@@ -22,10 +24,15 @@ runs:
       env:
         BACKEND_KEY: "gitops-demo/${{ github.environment }}/${{ github.ref_name }}/application.tfstate"
       working-directory: terraform/application/${{ github.environment }}
+      shell: bash
 
     - name: Terraform Destroy
-      run: terraform destroy -auto-approve -var "kubeconfig_path=./kubeconfig-${{ github.environment }}.yaml"
+      run: |
+        terraform destroy \
+          -auto-approve \
+          -var "kubeconfig_path=./kubeconfig-${{ github.environment }}.yaml"
       env:
         AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
       working-directory: terraform/application/${{ github.environment }}
+      shell: bash
