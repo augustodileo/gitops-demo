@@ -17,11 +17,14 @@ runs:
     - name: Terraform Init
       run: |
         terraform init \
-          -backend-config="bucket=${{ vars.AWS_BUCKET }}" \
+          -backend-config="bucket=$AWS_BUCKET" \
           -backend-config="key=${{ env.BACKEND_KEY }}" \
-          -backend-config="region=${{ vars.AWS_REGION }}" \
-          -backend-config="dynamodb_table=${{ vars.AWS_DYNAMODB_TABLE }}"
+          -backend-config="region=$AWS_REGION" \
+          -backend-config="dynamodb_table=$AWS_DYNAMODB_TABLE"
       env:
+        AWS_BUCKET: ${{ vars.AWS_BUCKET }}
+        AWS_DYNAMODB_TABLE: ${{ vars.AWS_DYNAMODB_TABLE }}
+        AWS_REGION: ${{ vars.AWS_REGION }}
         BACKEND_KEY: "gitops-demo/${{ github.environment }}/${{ github.ref_name }}/cluster.tfstate"
       working-directory: terraform/cluster-creation/${{ github.environment }}
       shell: bash
