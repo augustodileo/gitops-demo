@@ -29,8 +29,8 @@ runs:
       id: apply
       run: terraform apply -auto-approve -var="cluster_name=${{ inputs.clusterName }}"
       env:
-        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
       working-directory: terraform/cluster-creation/${{ github.environment }}
 
     - name: Extract Kubeconfig
