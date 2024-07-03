@@ -34,9 +34,6 @@ outputs:
 
 runs:
   using: 'composite'
-  env:
-    AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}
-    AWS_SECRET_ACCESS_KEY: ${{ inputs.awsSecretAccessKey }}
   steps:
     - name: Terraform Init
       run: |
@@ -46,6 +43,8 @@ runs:
           -backend-config="key=${{ env.BACKEND_KEY }}" \
           -backend-config="region=${{ inputs.awsRegion }}"
       env:
+        AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}
+        AWS_SECRET_ACCESS_KEY: ${{ inputs.awsSecretAccessKey }}
         BACKEND_KEY: "gitops-demo/${{ inputs.environment }}/${{ inputs.branch }}/cluster.tfstate"
       working-directory: terraform/cluster/${{ inputs.environment }}
       shell: bash
@@ -56,8 +55,11 @@ runs:
         terraform apply \
           -auto-approve \
           -var="cluster_name=${{ inputs.clusterName }}"
-      shell: bash
+      env:
+        AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}
+        AWS_SECRET_ACCESS_KEY: ${{ inputs.awsSecretAccessKey }}
       working-directory: terraform/cluster/${{ inputs.environment }}
+      shell: bash
 
     - name: Extract Kubeconfig
       id: extract_kubeconfig

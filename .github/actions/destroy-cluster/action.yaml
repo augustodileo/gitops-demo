@@ -38,6 +38,8 @@ runs:
           -backend-config="region=${{ inputs.awsRegion }}" \
           -backend-config="dynamodb_table=${{ inputs.awsDynamoDBTable }}"
       env:
+        AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}
+        AWS_SECRET_ACCESS_KEY: ${{ inputs.awsSecretAccessKey }}
         BACKEND_KEY: "gitops-demo/${{ inputs.environment }}/${{ inputs.branch }}/cluster.tfstate"
       working-directory: terraform/cluster/${{ inputs.environment }}
       shell: bash

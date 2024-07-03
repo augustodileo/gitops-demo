@@ -29,9 +29,6 @@ inputs:
 
 runs:
   using: 'composite'
-  env:
-    AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}
-    AWS_SECRET_ACCESS_KEY: ${{ inputs.awsSecretAccessKey }}
   steps:
     - name: Write Kubeconfig to file
       run: |
@@ -46,6 +43,8 @@ runs:
           -backend-config="region=${{ inputs.awsRegion }}" \
           -backend-config="dynamodb_table=${{ inputs.awsDynamoDBTable }}"
       env:
+        AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}
+        AWS_SECRET_ACCESS_KEY: ${{ inputs.awsSecretAccessKey }}
         BACKEND_KEY: "gitops-demo/${{ inputs.environment }}/${{ inputs.branch }}/application-key.tfstate"
       working-directory: terraform/applications/${{ inputs.environment }}
       shell: bash
@@ -55,5 +54,8 @@ runs:
         terraform apply \
           -auto-approve \
           -var "kubeconfig_path=./kubeconfig-${{ inputs.environment }}.yaml"
+      env:
+        AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}
+        AWS_SECRET_ACCESS_KEY: ${{ inputs.awsSecretAccessKey }}
       working-directory: terraform/applications/${{ inputs.environment }}
       shell: bash
