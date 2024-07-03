@@ -29,5 +29,5 @@ resource "kind_cluster" "default" {
 
 resource "local_file" "kubeconfig" {
   content  = kind_cluster.default.kubeconfig
-  filename = "${path.module}/kubeconfig-${var.cluster_name}"
+  filename = "${path.root}/kubeconfig-${var.cluster_name}.yaml"
 }
