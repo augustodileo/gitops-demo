@@ -37,6 +37,8 @@ runs:
 
     - name: Terraform Init
       run: |
+        cd terraform/application/${{ inputs.environment }}
+
         terraform init \
           -backend-config="bucket=${{ inputs.awsBucket }}" \
           -backend-config="key=${{ env.BACKEND_KEY }}" \
@@ -44,16 +46,16 @@ runs:
           -backend-config="dynamodb_table=${{ inputs.awsDynamoDBTable }}"
       env:
         BACKEND_KEY: "gitops-demo/${{ inputs.environment }}/${{ inputs.branch }}/application-key.tfstate"
-      working-directory: terraform/application/${{ inputs.environment }}
       shell: bash
 
     - name: Terraform Apply
       run: |
+        cd terraform/application/${{ inputs.environment }}
+
         terraform apply \
           -auto-approve \
           -var "kubeconfig_path=./kubeconfig-${{ inputs.environment }}.yaml"
       env:
         AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.awsSecretAccessKey }}
-      working-directory: terraform/application/${{ inputs.environment }}
       shell: bash

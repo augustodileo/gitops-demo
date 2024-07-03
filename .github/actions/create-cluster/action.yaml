@@ -37,6 +37,7 @@ runs:
   steps:
     - name: Terraform Init
       run: |
+        cd terraform/cluster/${{ inputs.environment }}
         terraform init \
           -backend-config="bucket=${{ inputs.awsBucket }}" \
           -backend-config="dynamodb_table=${{ inputs.awsDynamoDBTable }}" \
@@ -44,13 +45,13 @@ runs:
           -backend-config="region=${{ inputs.awsRegion }}"
       env:
         BACKEND_KEY: "gitops-demo/${{ inputs.environment }}/${{ inputs.branch }}/cluster.tfstate"
-      workking-directory: terraform/cluster-creation/${{ inputs.environment }}
+      workking-directory: terraform/cluster/${{ inputs.environment }}
       shell: bash
 
     - name: Terraform Apply
       id: apply
       run: |
-        cd terraform/cluster-creation/${{ inputs.environment }}
+        cd terraform/cluster/${{ inputs.environment }}
         terraform apply \
           -auto-approve \
           -var="cluster_name=${{ inputs.clusterName }}"
