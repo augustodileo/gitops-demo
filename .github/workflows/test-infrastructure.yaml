@@ -86,7 +86,9 @@ jobs:
 
       - name: Run tests
         id: run-tests
-        run: kubectl get pods -n default
+        run: |
+          kubectl get namespaces
+          kubectl get pods -n argocd
         env:
           KUBECONFIG: ${{ steps.create-cluster.outputs.kubeconfigPath }}
 
@@ -101,7 +103,7 @@ jobs:
           awsSecretAccessKey: ${{ secrets.AWS_SECRET_KEY }}
           branch: ${{ github.ref_name }}
           environment: ${{ vars.ENVIRONMENT_NAME }}
-          kubeconfigContent: ${{ steps.create-cluster.outputs.kubeconfigContent }}
+          kubeconfigPath: ${{ steps.create-cluster.outputs.kubeconfigPath }}
 
       - name: Destroy Cluster
         if: always()
