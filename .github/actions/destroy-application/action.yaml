@@ -30,11 +30,6 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Write Kubeconfig to file
-      run: |
-        echo "${{ inputs.kubeconfigContent }}" > "${GITHUB_WORKSPACE}/kubeconfig-${{ inputs.environment }}.yaml"
-      shell: bash
-
     - name: Terraform Init
       run: |
         terraform init \
@@ -53,7 +48,7 @@ runs:
       run: |
         terraform destroy \
           -auto-approve \
-          -var "kubeconfig_path=${GITHUB_WORKSPACE}/kubeconfig-${{ inputs.environment }}.yaml"
+          -var "kubeconfig_path=${{ inputs.kubeconfigPath }}"
       env:
         AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.awsSecretAccessKey }}
