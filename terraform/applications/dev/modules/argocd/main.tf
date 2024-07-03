@@ -4,8 +4,6 @@ resource "helm_release" "argocd" {
   chart            = "argo-cd"
   namespace        = "argocd"
   create_namespace = true
-
-  depends_on = [local_file.kubeconfig]
 }
 
 data "kubernetes_secret" "argocd_initial_admin_secret" {
