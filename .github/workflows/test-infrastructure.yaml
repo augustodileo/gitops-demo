@@ -55,14 +55,14 @@ jobs:
         id: create-cluster
         uses: ./.github/actions/create-cluster
         with:
-          awsAccessKeyId: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          awsAccessKeyId: ${{ vars.AWS_ACCESS_KEY_ID }}
           awsBucket: ${{ vars.AWS_BUCKET }}
           awsDynamoDBTable: ${{ vars.AWS_DYNAMODB_TABLE }}
           awsRegion: ${{ vars.AWS_REGION }}
-          awsSecretAccessKey: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          awsSecretAccessKey: ${{ secrets.AWS_SECRET_KEY }}
           branch: ${{ github.ref_name }}
-          clusterName: ${{ inputs.clusterName }}
-          environment: ${{ github.environment }}
+          clusterName: ${{ vars.clusterName }}
+          environment: ${{ vars.environment }}
 
       - name: Create Application
         id: create-application
@@ -74,7 +74,7 @@ jobs:
           awsRegion: ${{ secrets.AWS_REGION }}
           awsSecretAccessKey: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           branch: ${{ github.ref_name }}
-          environment: ${{ github.environment }}
+          environment: ${{ vars.environment }}
           kubeconfigContent: ${{ steps.create-cluster.outputs.kubeconfigContent }}
 
       - name: Run tests
@@ -93,7 +93,7 @@ jobs:
           awsRegion: ${{ secrets.AWS_REGION }}
           awsSecretAccessKey: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           branch: ${{ github.ref_name }}
-          environment: ${{ github.environment }}
+          environment: ${{ vars.environment }}
           kubeconfigContent: ${{ steps.create-cluster.outputs.kubeconfigContent }}
 
       - name: Destroy Cluster
@@ -106,5 +106,5 @@ jobs:
           awsRegion: ${{ secrets.AWS_REGION }}
           awsSecretAccessKey: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           branch: ${{ github.ref_name }}
-          clusterName: ${{ inputs.clusterName }}
-          environment: ${{ github.environment }}
+          clusterName: ${{ vars.clusterName }}
+          environment: ${{ vars.environment }}
