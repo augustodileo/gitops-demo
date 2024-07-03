@@ -30,7 +30,7 @@ inputs:
 outputs:
   kubeconfigContent:
     description: 'Kubeconfig content'
-    value: ${{ steps.apply.outputs.kubeconfigContent }}
+    value: ${{ steps.ouotput.outputs.kubeconfigPath }}
 
 runs:
   using: 'composite'
@@ -55,13 +55,15 @@ runs:
         terraform apply \
           -auto-approve \
           -var="cluster_name=${{ inputs.clusterName }}"
-
-        KUBECONFIG_CONTENT=$(terraform output -raw kubeconfig_content)
-        echo $KUBECONFIG_CONTENT
-        echo "kubeconfigContent=${KUBECONFIG_CONTENT}" >> $GITHUB_OUTPUT
-
       env:
         AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.awsSecretAccessKey }}
+      working-directory: terraform/cluster/${{ inputs.environment }}
+      shell: bash
+
+    - name: Terraform Output
+      id: output
+      run: |
+        echo "kubeconfigPath=$(terraform output -raw kubeconfigPath)" >> $GITHUB_OUTPUT
       working-directory: terraform/cluster/${{ inputs.environment }}
       shell: bash
