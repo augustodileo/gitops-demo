@@ -64,5 +64,5 @@ runs:
     - name: Extract Kubeconfig
       id: extract_kubeconfig
       run: |
-        echo "kubeconfigContent=$$(terraform output -raw kubeconfig_content)" >> $GITHUB_OUTPUT
+        echo "kubeconfigContent=$(terraform output -raw kubeconfig_content)" >> $GITHUB_OUTPUT
       shell: bash
