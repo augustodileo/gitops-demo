@@ -45,7 +45,7 @@ runs:
           -backend-config="region=${{ inputs.awsRegion }}"
       env:
         BACKEND_KEY: "gitops-demo/${{ inputs.environment }}/${{ inputs.branch }}/cluster.tfstate"
-      workking-directory: terraform/cluster/${{ inputs.environment }}
+      working-directory: terraform/cluster/${{ inputs.environment }}
       shell: bash
 
     - name: Terraform Apply
