@@ -60,7 +60,9 @@ jobs:
           awsDynamoDBTable: ${{ vars.AWS_DYNAMODB_TABLE }}
           awsRegion: ${{ vars.AWS_REGION }}
           awsSecretAccessKey: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          branch: ${{ github.ref_name }}
           clusterName: ${{ inputs.clusterName }}
+          environment: ${{ github.environment }}
 
       - name: Create Application
         id: create-application
@@ -71,6 +73,8 @@ jobs:
           awsDynamoDBTable: ${{ secrets.AWS_DYNAMODB_TABLE }}
           awsRegion: ${{ secrets.AWS_REGION }}
           awsSecretAccessKey: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          branch: ${{ github.ref_name }}
+          environment: ${{ github.environment }}
           kubeconfigContent: ${{ steps.create-cluster.outputs.kubeconfigContent }}
 
       - name: Run tests
@@ -88,6 +92,8 @@ jobs:
           awsDynamoDBTable: ${{ secrets.AWS_DYNAMODB_TABLE }}
           awsRegion: ${{ secrets.AWS_REGION }}
           awsSecretAccessKey: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          branch: ${{ github.ref_name }}
+          environment: ${{ github.environment }}
           kubeconfigContent: ${{ steps.create-cluster.outputs.kubeconfigContent }}
 
       - name: Destroy Cluster
@@ -99,4 +105,6 @@ jobs:
           awsDynamoDBTable: ${{ secrets.AWS_DYNAMODB_TABLE }}
           awsRegion: ${{ secrets.AWS_REGION }}
           awsSecretAccessKey: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          clusterName: ${{ github.event.inputs.clusterName }}
+          branch: ${{ github.ref_name }}
+          clusterName: ${{ inputs.clusterName }}
+          environment: ${{ github.environment }}

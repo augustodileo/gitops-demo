@@ -17,8 +17,14 @@ inputs:
   awsSecretAccessKey:
     description: 'AWS Secret Access Key'
     required: true
+  branch:
+    description: 'Branch for the infrastructure'
+    required: true
   clusterName:
     description: 'Cluster name'
+    required: true
+  environment:
+    description: 'Environment for the infrastructure'
     required: true
 
 runs:
@@ -32,8 +38,8 @@ runs:
           -backend-config="region=${{ inputs.awsRegion }}" \
           -backend-config="dynamodb_table=${{ inputs.awsDynamoDBTable }}"
       env:
-        BACKEND_KEY: "gitops-demo/${{ github.environment }}/${{ github.ref_name }}/cluster.tfstate"
-      working-directory: terraform/cluster-creation/${{ github.environment }}
+        BACKEND_KEY: "gitops-demo/${{ inputs.environment }}/${{ inputs.branch }}/cluster.tfstate"
+      working-directory: terraform/cluster-creation/${{ inputs.environment }}
       shell: bash
 
     - name: Terraform Destroy
@@ -44,5 +50,5 @@ runs:
       env:
         AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.awsSecretAccessKey }}
-      working-directory: terraform/cluster-creation/${{ github.environment }}
+      working-directory: terraform/cluster-creation/${{ inputs.environment }}
       shell: bash

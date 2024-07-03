@@ -17,6 +17,12 @@ inputs:
   awsSecretAccessKey:
     description: 'AWS Secret Access Key'
     required: true
+  branch:
+    description: 'Branch for the infrastructure'
+    required: true
+  environment:
+    description: 'Environment for the infrastructure'
+    required: true
   kubeconfigContent:
     description: 'Kubeconfig content'
     required: true
@@ -26,7 +32,7 @@ runs:
   steps:
     - name: Write Kubeconfig to file
       run: |
-        echo "${{ inputs.kubeconfigContent }}" > ./kubeconfig-${{ github.environment }}.yaml
+        echo "${{ inputs.kubeconfigContent }}" > ./kubeconfig-${{ inputs.environment }}.yaml
       shell: bash
 
     - name: Terraform Init
@@ -37,17 +43,17 @@ runs:
           -backend-config="region=${{ inputs.awsRegion }}" \
           -backend-config="dynamodb_table=${{ inputs.awsDynamoDBTable }}"
       env:
-        BACKEND_KEY: "gitops-demo/${{ github.environment }}/${{ github.ref_name }}/application.tfstate"
-      working-directory: terraform/application/${{ github.environment }}
+        BACKEND_KEY: "gitops-demo/${{ inputs.environment }}/${{ inputs.branch }}/application.tfstate"
+      working-directory: terraform/application/${{ inputs.environment }}
       shell: bash
 
     - name: Terraform Destroy
       run: |
         terraform destroy \
           -auto-approve \
-          -var "kubeconfig_path=./kubeconfig-${{ github.environment }}.yaml"
+          -var "kubeconfig_path=./kubeconfig-${{ inputs.environment }}.yaml"
       env:
         AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.awsSecretAccessKey }}
-      working-directory: terraform/application/${{ github.environment }}
+      working-directory: terraform/application/${{ inputs.environment }}
       shell: bash
