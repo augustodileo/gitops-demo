@@ -68,14 +68,19 @@ jobs:
         id: create-application
         uses: ./.github/actions/create-application
         with:
-          awsAccessKeyId: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          awsBucket: ${{ secrets.AWS_BUCKET }}
-          awsDynamoDBTable: ${{ secrets.AWS_DYNAMODB_TABLE }}
-          awsRegion: ${{ secrets.AWS_REGION }}
-          awsSecretAccessKey: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          awsAccessKeyId: ${{ vars.AWS_ACCESS_KEY_ID }}
+          awsBucket: ${{ vars.AWS_BUCKET }}
+          awsDynamoDBTable: ${{ vars.AWS_DYNAMODB_TABLE }}
+          awsRegion: ${{ vars.AWS_REGION }}
+          awsSecretAccessKey: ${{ secrets.AWS_SECRET_KEY }}
           branch: ${{ github.ref_name }}
           environment: ${{ vars.ENVIRONMENT_NAME }}
           kubeconfigContent: ${{ steps.create-cluster.outputs.kubeconfigContent }}
+
+    - name: Install kubectl
+      uses: azure/setup-kubectl@v3
+      with:
+        version: 'v1.23.4'
 
       - name: Run tests
         id: run-tests
