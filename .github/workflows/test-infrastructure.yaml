@@ -53,7 +53,7 @@ jobs:
 
       - name: Create Cluster
         id: create-cluster
-        uses: ./.github/actions/create-cluster/action.yml
+        uses: ./.github/actions/create-cluster
         with:
           awsAccessKeyId: ${{ secrets.AWS_ACCESS_KEY_ID }}
           awsBucket: ${{ vars.AWS_BUCKET }}
@@ -64,7 +64,7 @@ jobs:
 
       - name: Create Application
         id: create-application
-        uses: ./.github/actions/create-application/action.yml
+        uses: ./.github/actions/create-application
         with:
           awsAccessKeyId: ${{ secrets.AWS_ACCESS_KEY_ID }}
           awsBucket: ${{ secrets.AWS_BUCKET }}
@@ -81,7 +81,7 @@ jobs:
 
       - name: Destroy Application
         if: always()
-        uses: ./.github/actions/destroy-application/action.yml
+        uses: ./.github/actions/destroy-application
         with:
           awsAccessKeyId: ${{ secrets.AWS_ACCESS_KEY_ID }}
           awsBucket: ${{ secrets.AWS_BUCKET }}
@@ -92,7 +92,7 @@ jobs:
 
       - name: Destroy Cluster
         if: always()
-        uses: ./.github/actions/destroy-cluster/action.yml
+        uses: ./.github/actions/destroy-cluster
         with:
           awsAccessKeyId: ${{ secrets.AWS_ACCESS_KEY_ID }}
           awsBucket: ${{ secrets.AWS_BUCKET }}
