@@ -53,14 +53,26 @@ jobs:
 
       - name: Create Cluster
         id: create-cluster
-        uses: ./.github/actions/create-cluster
+        uses: ./.github/actions/create-cluster/action.yml
         with:
-          clusterName: ${{ vars.CLUSTER_NAME }}
+          awsAccessKeyId: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          awsBucket: ${{ vars.AWS_BUCKET }}
+          awsDynamoDBTable: ${{ vars.AWS_DYNAMODB_TABLE }}
+          awsRegion: ${{ vars.AWS_REGION }}
+          awsSecretAccessKey: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          clusterName: ${{ inputs.clusterName }}
+        outputs:
+          kubeconfigContent: ${{ steps.create-cluster.outputs.kubeconfigContent }}
 
       - name: Create Application
         id: create-application
-        uses: ./.github/actions/create-application
+        uses: ./.github/actions/create-application/action.yml
         with:
+          awsAccessKeyId: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          awsBucket: ${{ secrets.AWS_BUCKET }}
+          awsDynamoDBTable: ${{ secrets.AWS_DYNAMODB_TABLE }}
+          awsRegion: ${{ secrets.AWS_REGION }}
+          awsSecretAccessKey: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           kubeconfigContent: ${{ steps.create-cluster.outputs.kubeconfigContent }}
 
       - name: Run tests
@@ -71,12 +83,22 @@ jobs:
 
       - name: Destroy Application
         if: always()
-        uses: ./.github/actions/destroy-application
+        uses: ./.github/actions/destroy-application/action.yml
         with:
+          awsAccessKeyId: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          awsBucket: ${{ secrets.AWS_BUCKET }}
+          awsDynamoDBTable: ${{ secrets.AWS_DYNAMODB_TABLE }}
+          awsRegion: ${{ secrets.AWS_REGION }}
+          awsSecretAccessKey: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           kubeconfigContent: ${{ steps.create-cluster.outputs.kubeconfigContent }}
 
       - name: Destroy Cluster
         if: always()
-        uses: ./.github/actions/destroy-cluster
+        uses: ./.github/actions/destroy-cluster/action.yml
         with:
-          clusterName: ${{ vars.CLUSTER_NAME }}
+          awsAccessKeyId: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          awsBucket: ${{ secrets.AWS_BUCKET }}
+          awsDynamoDBTable: ${{ secrets.AWS_DYNAMODB_TABLE }}
+          awsRegion: ${{ secrets.AWS_REGION }}
+          awsSecretAccessKey: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          clusterName: ${{ github.event.inputs.clusterName }}

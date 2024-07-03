@@ -2,6 +2,21 @@ name: 'Terraform Application Destroy'
 description: 'Initialize and destroy Terraform configuration for application'
 
 inputs:
+  awsAccessKeyId:
+    description: 'AWS Access Key ID'
+    required: true
+  awsBucket:
+    description: 'AWS Bucket name'
+    required: true
+  awsDynamoDBTable:
+    description: 'AWS DynamoDB Table name'
+    required: true
+  awsRegion:
+    description: 'AWS S3 Region'
+    required: true
+  awsSecretAccessKey:
+    description: 'AWS Secret Access Key'
+    required: true
   kubeconfigContent:
     description: 'Kubeconfig content'
     required: true
@@ -17,10 +32,10 @@ runs:
     - name: Terraform Init
       run: |
         terraform init \
-          -backend-config="bucket=${{ vars.AWS_BUCKET }}" \
+          -backend-config="bucket=${{ inputs.awsBucket }}" \
           -backend-config="key=${{ env.BACKEND_KEY }}" \
-          -backend-config="region=${{ vars.AWS_REGION }}" \
-          -backend-config="dynamodb_table=${{ vars.AWS_DYNAMODB_TABLE }}"
+          -backend-config="region=${{ inputs.awsRegion }}" \
+          -backend-config="dynamodb_table=${{ inputs.awsDynamoDBTable }}"
       env:
         BACKEND_KEY: "gitops-demo/${{ github.environment }}/${{ github.ref_name }}/application.tfstate"
       working-directory: terraform/application/${{ github.environment }}
@@ -32,7 +47,7 @@ runs:
           -auto-approve \
           -var "kubeconfig_path=./kubeconfig-${{ github.environment }}.yaml"
       env:
-        AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+        AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}
+        AWS_SECRET_ACCESS_KEY: ${{ inputs.awsSecretAccessKey }}
       working-directory: terraform/application/${{ github.environment }}
       shell: bash

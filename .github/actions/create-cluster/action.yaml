@@ -2,6 +2,21 @@ name: 'Terraform Cluster Creation'
 description: 'Initialize and apply Terraform configuration for cluster creation'
 
 inputs:
+  awsAccessKeyId:
+    description: 'AWS Access Key ID'
+    required: true
+  awsBucket:
+    description: 'AWS Bucket name'
+    required: true
+  awsDynamoDBTable:
+    description: 'AWS DymamoDB Table name'
+    required: true
+  awsRegion:
+    description: 'AWS S3 Region'
+    required: true
+  awsSecretAccessKey:
+    description: 'AWS Secret Access Key'
+    required: true
   clusterName:
     description: 'Cluster name'
     required: true
@@ -17,14 +32,11 @@ runs:
     - name: Terraform Init
       run: |
         terraform init \
-          -backend-config="bucket=$AWS_BUCKET" \
+          -backend-config="bucket=${{ inputs.awsBucket }}" \
+          -backend-config="dynamodb_table=${{ inputs.awsDynamoDBTable }}" \
           -backend-config="key=${{ env.BACKEND_KEY }}" \
-          -backend-config="region=$AWS_REGION" \
-          -backend-config="dynamodb_table=$AWS_DYNAMODB_TABLE"
+          -backend-config="region=${{ inputs.awsRegion }}"
       env:
-        AWS_BUCKET: ${{ vars.AWS_BUCKET }}
-        AWS_DYNAMODB_TABLE: ${{ vars.AWS_DYNAMODB_TABLE }}
-        AWS_REGION: ${{ vars.AWS_REGION }}
         BACKEND_KEY: "gitops-demo/${{ github.environment }}/${{ github.ref_name }}/cluster.tfstate"
       working-directory: terraform/cluster-creation/${{ github.environment }}
       shell: bash
@@ -36,8 +48,8 @@ runs:
           -auto-approve \
           -var="cluster_name=${{ inputs.clusterName }}"
       env:
-        AWS_ACCESS_KEY_ID: ${{ vars.AWS_ACCESS_KEY_ID }}
-        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+        AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}
+        AWS_SECRET_ACCESS_KEY: ${{ inputs.awsSecretAccessKey }}
       working-directory: terraform/cluster-creation/${{ github.environment }}
       shell: bash
 
