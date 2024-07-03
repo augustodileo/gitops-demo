@@ -45,7 +45,7 @@ runs:
       env:
         AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.awsSecretAccessKey }}
-        BACKEND_KEY: "gitops-demo/${{ inputs.environment }}/${{ inputs.branch }}/application.tfstate"
+        BACKEND_KEY: "gitops-demo/${{ inputs.environment }}/${{ inputs.branch }}/application-key.tfstate"
       working-directory: terraform/applications/${{ inputs.environment }}
       shell: bash
 

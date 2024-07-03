@@ -66,10 +66,6 @@ jobs:
           clusterName: ${{ vars.CLUSTER_NAME }}
           environment: ${{ vars.ENVIRONMENT_NAME }}
 
-      - name: Checking directories
-        run: |
-          cat ${{ steps.create-cluster.outputs.kubeconfigPath }}
-
       - name: Create Application
         id: create-application
         uses: ./.github/actions/create-application
@@ -92,7 +88,7 @@ jobs:
         id: run-tests
         run: kubectl get pods -n default
         env:
-          KUBECONFIG: ${{ steps.create-cluster.outputs.kubeconfigContent }}
+          KUBECONFIG: ${{ steps.create-cluster.outputs.kubeconfigPath }}
 
       - name: Destroy Application
         if: always()
