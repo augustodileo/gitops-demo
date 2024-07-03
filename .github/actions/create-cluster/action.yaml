@@ -64,6 +64,6 @@ runs:
     - name: Terraform Output
       id: output
       run: |
-        echo "kubeconfigPath=$(terraform output -raw kubeconfigPath)" >> $GITHUB_OUTPUT
+        echo "kubeconfigPath=$(terraform output -raw kubeconfig_path)" >> $GITHUB_OUTPUT
       working-directory: terraform/cluster/${{ inputs.environment }}
       shell: bash
