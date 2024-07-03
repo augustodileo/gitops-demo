@@ -61,8 +61,8 @@ jobs:
           awsRegion: ${{ vars.AWS_REGION }}
           awsSecretAccessKey: ${{ secrets.AWS_SECRET_KEY }}
           branch: ${{ github.ref_name }}
-          clusterName: ${{ vars.clusterName }}
-          environment: ${{ vars.environment }}
+          clusterName: ${{ vars.CLUSTER_NAME }}
+          environment: ${{ vars.ENVIRONMENT_NAME }}
 
       - name: Create Application
         id: create-application
@@ -74,7 +74,7 @@ jobs:
           awsRegion: ${{ secrets.AWS_REGION }}
           awsSecretAccessKey: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           branch: ${{ github.ref_name }}
-          environment: ${{ vars.environment }}
+          environment: ${{ vars.ENVIRONMENT_NAME }}
           kubeconfigContent: ${{ steps.create-cluster.outputs.kubeconfigContent }}
 
       - name: Run tests
@@ -93,7 +93,7 @@ jobs:
           awsRegion: ${{ secrets.AWS_REGION }}
           awsSecretAccessKey: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           branch: ${{ github.ref_name }}
-          environment: ${{ vars.environment }}
+          environment: ${{ vars.ENVIRONMENT_NAME }}
           kubeconfigContent: ${{ steps.create-cluster.outputs.kubeconfigContent }}
 
       - name: Destroy Cluster
@@ -106,5 +106,5 @@ jobs:
           awsRegion: ${{ secrets.AWS_REGION }}
           awsSecretAccessKey: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           branch: ${{ github.ref_name }}
-          clusterName: ${{ vars.clusterName }}
-          environment: ${{ vars.environment }}
+          clusterName: ${{ vars.CLUSTER_NAME }}
+          environment: ${{ vars.ENVIRONMENT_NAME }}
