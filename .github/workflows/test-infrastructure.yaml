@@ -61,8 +61,6 @@ jobs:
           awsRegion: ${{ vars.AWS_REGION }}
           awsSecretAccessKey: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           clusterName: ${{ inputs.clusterName }}
-        outputs:
-          kubeconfigContent: ${{ steps.create-cluster.outputs.kubeconfigContent }}
 
       - name: Create Application
         id: create-application
