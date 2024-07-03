@@ -75,7 +75,7 @@ jobs:
           awsSecretAccessKey: ${{ secrets.AWS_SECRET_KEY }}
           branch: ${{ github.ref_name }}
           environment: ${{ vars.ENVIRONMENT_NAME }}
-          kubeconfigPath: ${{ steps.create-cluster.outputs.kubeconfigPath }}
+          kubeconfigPath: ${{ steps.create-cluster.outputs.kubeconfig_path }}
 
       - name: Install kubectl
         uses: azure/setup-kubectl@v3
