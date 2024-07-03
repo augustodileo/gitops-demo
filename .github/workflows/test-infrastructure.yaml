@@ -68,31 +68,7 @@ jobs:
 
       - name: Checking directories
         run: |
-          echo "listing ./"
-          ls -al ./
-          echo "Listing root directory"
-          ls -al
-          echo "Listing terraform/cluster-creation"
-          ls -al terraform/cluster-creation
-          echo "Listing terraform/cluster-creation/dev"
-          ls -al terraform/cluster-creation/dev
-          echo "Listing terraform/application"
-          ls -al terraform/application
-          echo "Listing terraform/application/dev"
-          ls -al terraform/application/dev
-          echo "Listing /home/runner/work/${{ github.repository }}"
-          ls -al /home/runner/work/${{ github.repository }}
-          echo "Listing /home/runner/work/${{ github.repository }}/terraform"
-          ls -al /home/runner/work/${{ github.repository }}/terraform
-          echo "Listing /home/runner/work/${{ github.repository }}/terraform/cluster-creation"
-          ls -al /home/runner/work/${{ github.repository }}/terraform/cluster-creation
-          echo "Listing /home/runner/work/${{ github.repository }}/terraform/cluster-creation/dev"
-          ls -al /home/runner/work/${{ github.repository }}/terraform/cluster-creation/dev
-          echo "Listing /home/runner/work/${{ github.repository }}/terraform/application"
-          ls -al /home/runner/work/${{ github.repository }}/terraform/application
-          echo "Listing /home/runner/work/${{ github.repository }}/terraform/application/dev"
-          ls -al /home/runner/work/${{ github.repository }}/terraform/application/dev
-
+          cat ${{ steps.create-cluster.outputs.kubeconfigPath }}
 
       - name: Create Application
         id: create-application
