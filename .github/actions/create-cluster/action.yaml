@@ -37,7 +37,6 @@ runs:
   steps:
     - name: Terraform Init
       run: |
-        cd terraform/cluster/${{ inputs.environment }}
         terraform init \
           -backend-config="bucket=${{ inputs.awsBucket }}" \
           -backend-config="dynamodb_table=${{ inputs.awsDynamoDBTable }}" \
@@ -52,6 +51,7 @@ runs:
       id: apply
       run: |
         cd terraform/cluster/${{ inputs.environment }}
+
         terraform apply \
           -auto-approve \
           -var="cluster_name=${{ inputs.clusterName }}"
