@@ -28,9 +28,9 @@ inputs:
     required: true
 
 outputs:
-  kubeconfigContent:
+  kubeconfigPath:
     description: 'Kubeconfig content'
-    value: ${{ steps.output.outputs.kubeconfig_path }}
+    value: ${{ steps.output.outputs.kubeconfigPath }}
 
 runs:
   using: 'composite'
@@ -64,7 +64,7 @@ runs:
     - name: Terraform Output
       id: output
       run: |
-        echo "kubeconfig_path=$(terraform output -raw kubeconfig_path)" >> $GITHUB_OUTPUT
+        echo "kubeconfigPath=$(terraform output -raw kubeconfig_path)" >> $GITHUB_OUTPUT
       env:
         AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.awsSecretAccessKey }}
