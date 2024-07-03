@@ -32,8 +32,6 @@ runs:
   steps:
     - name: Terraform Init
       run: |
-        cd terraform/cluster/${{ inputs.environment }}
-
         terraform init \
           -backend-config="bucket=${{ inputs.awsBucket }}" \
           -backend-config="key=${{ env.BACKEND_KEY }}" \
@@ -41,16 +39,16 @@ runs:
           -backend-config="dynamodb_table=${{ inputs.awsDynamoDBTable }}"
       env:
         BACKEND_KEY: "gitops-demo/${{ inputs.environment }}/${{ inputs.branch }}/cluster.tfstate"
+      working-directory: terraform/cluster/${{ inputs.environment }}
       shell: bash
 
     - name: Terraform Destroy
       run: |
-        cd terraform/cluster/${{ inputs.environment }}
-
         terraform destroy \
           -auto-approve \
           -var="cluster_name=${{ inputs.clusterName }}"
       env:
         AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.awsSecretAccessKey }}
+      working-directory: terraform/cluster/${{ inputs.environment }}
       shell: bash

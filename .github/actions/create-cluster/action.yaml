@@ -34,6 +34,9 @@ outputs:
 
 runs:
   using: 'composite'
+  env:
+    AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}
+    AWS_SECRET_ACCESS_KEY: ${{ inputs.awsSecretAccessKey }}
   steps:
     - name: Terraform Init
       run: |
@@ -50,15 +53,11 @@ runs:
     - name: Terraform Apply
       id: apply
       run: |
-        cd terraform/cluster/${{ inputs.environment }}
-
         terraform apply \
           -auto-approve \
           -var="cluster_name=${{ inputs.clusterName }}"
-      env:
-        AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}
-        AWS_SECRET_ACCESS_KEY: ${{ inputs.awsSecretAccessKey }}
       shell: bash
+      working-directory: terraform/cluster/${{ inputs.environment }}
 
     - name: Extract Kubeconfig
       id: extract_kubeconfig
