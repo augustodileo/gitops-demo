@@ -31,6 +31,7 @@ runs:
   steps:
     - name: Terraform Init
       run: |
+        cd terraform/cluster-creation/${{ github.environment }}
         terraform init \
           -backend-config="bucket=${{ inputs.awsBucket }}" \
           -backend-config="dynamodb_table=${{ inputs.awsDynamoDBTable }}" \
@@ -38,24 +39,22 @@ runs:
           -backend-config="region=${{ inputs.awsRegion }}"
       env:
         BACKEND_KEY: "gitops-demo/${{ github.environment }}/${{ github.ref_name }}/cluster.tfstate"
-      working-directory: terraform/cluster-creation/${{ github.environment }}
       shell: bash
 
     - name: Terraform Apply
       id: apply
       run: |
+        cd terraform/cluster-creation/${{ github.environment }}
         terraform apply \
           -auto-approve \
           -var="cluster_name=${{ inputs.clusterName }}"
       env:
         AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.awsSecretAccessKey }}
-      working-directory: terraform/cluster-creation/${{ github.environment }}
       shell: bash
 
     - name: Extract Kubeconfig
       id: extract_kubeconfig
       run: |
         echo "::set-output name=kubeconfigContent::$(terraform output -raw kubeconfig_content)"
-      working-directory: terraform/cluster-creation/${{ github.environment }}
       shell: bash
