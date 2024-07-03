@@ -68,5 +68,8 @@ runs:
         kubeconfigPath=$(terraform output -raw kubeconfig_path)
         echo $kubeconfigPath
         echo "kubeconfigPath=$(terraform output -raw kubeconfig_path)" >> $GITHUB_OUTPUT
+      env:
+        AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}
+        AWS_SECRET_ACCESS_KEY: ${{ inputs.awsSecretAccessKey }}
       working-directory: terraform/cluster/${{ inputs.environment }}
       shell: bash
