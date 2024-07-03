@@ -30,7 +30,7 @@ inputs:
 outputs:
   kubeconfigContent:
     description: 'Kubeconfig content'
-    value: ${{ steps.ouotput.outputs.kubeconfigPath }}
+    value: ${{ steps.output.outputs.kubeconfigPath }}
 
 runs:
   using: 'composite'
@@ -64,6 +64,9 @@ runs:
     - name: Terraform Output
       id: output
       run: |
+        terraform output -raw kubeconfig_path
+        kubeconfigPath=$(terraform output -raw kubeconfig_path)
+        echo $kubeconfigPath
         echo "kubeconfigPath=$(terraform output -raw kubeconfig_path)" >> $GITHUB_OUTPUT
       working-directory: terraform/cluster/${{ inputs.environment }}
       shell: bash
