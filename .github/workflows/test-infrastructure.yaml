@@ -77,10 +77,10 @@ jobs:
           environment: ${{ vars.ENVIRONMENT_NAME }}
           kubeconfigContent: ${{ steps.create-cluster.outputs.kubeconfigContent }}
 
-    - name: Install kubectl
-      uses: azure/setup-kubectl@v3
-      with:
-        version: 'v1.23.4'
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'v1.23.4'
 
       - name: Run tests
         id: run-tests
