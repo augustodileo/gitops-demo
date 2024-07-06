@@ -65,6 +65,7 @@ jobs:
           branch: ${{ github.ref_name }}
           clusterName: ${{ vars.CLUSTER_NAME }}
           environment: ${{ vars.ENVIRONMENT_NAME }}
+          workingDirectory: "terraform/${{ vars.ENVIRONMENT_NAME }}/cluster"
 
       - name: Create Application
         id: create-application
@@ -78,6 +79,7 @@ jobs:
           branch: ${{ github.ref_name }}
           environment: ${{ vars.ENVIRONMENT_NAME }}
           kubeconfigPath: ${{ steps.create-cluster.outputs.kubeconfigPath }}
+          workingDirectory: "terraform/${{ vars.ENVIRONMENT_NAME }}/applications"
 
       - name: Install kubectl
         uses: azure/setup-kubectl@v3
@@ -104,6 +106,7 @@ jobs:
           branch: ${{ github.ref_name }}
           environment: ${{ vars.ENVIRONMENT_NAME }}
           kubeconfigPath: ${{ steps.create-cluster.outputs.kubeconfigPath }}
+          workingDirectory: "terraform/${{ vars.ENVIRONMENT_NAME }}/applications"
 
       - name: Destroy Cluster
         if: always()
@@ -117,3 +120,4 @@ jobs:
           branch: ${{ github.ref_name }}
           clusterName: ${{ vars.CLUSTER_NAME }}
           environment: ${{ vars.ENVIRONMENT_NAME }}
+          workingDirectory: "terraform/${{ vars.ENVIRONMENT_NAME }}/cluster"
