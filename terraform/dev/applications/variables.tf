@@ -5,7 +5,7 @@ variable "kubeconfig_path" {
 
 variable "applications" {
   description = "List of application names"
-  type        = List(string)
+  type        = list(string)
 }
 
 variable "repo_url" {
@@ -15,7 +15,7 @@ variable "repo_url" {
 
 variable "path" {
   description = "Environment of the application"
-  type        = strin
+  type        = string
 }
 
 variable "target_revision" {
