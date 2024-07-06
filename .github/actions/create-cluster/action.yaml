@@ -26,6 +26,9 @@ inputs:
   environment:
     description: 'Environment for the infrastructure'
     required: true
+  workingDirectory:
+    description: 'Working directory inside the repo'
+    required: true
 
 outputs:
   kubeconfigPath:
@@ -46,7 +49,7 @@ runs:
         AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.awsSecretAccessKey }}
         BACKEND_KEY: "gitops-demo/${{ inputs.environment }}/${{ inputs.branch }}/cluster.tfstate"
-      working-directory: terraform/cluster/${{ inputs.environment }}
+      working-directory: ${{ inputs.workingDirectory }}
       shell: bash
 
     - name: Terraform Apply
@@ -58,7 +61,7 @@ runs:
       env:
         AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.awsSecretAccessKey }}
-      working-directory: terraform/cluster/${{ inputs.environment }}
+      working-directory: ${{ inputs.workingDirectory }}
       shell: bash
 
     - name: Terraform Output
@@ -68,5 +71,5 @@ runs:
       env:
         AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.awsSecretAccessKey }}
-      working-directory: terraform/cluster/${{ inputs.environment }}
+      working-directory: ${{ inputs.workingDirectory }}
       shell: bash

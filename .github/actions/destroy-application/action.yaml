@@ -26,6 +26,9 @@ inputs:
   kubeconfigContent:
     description: 'Kubeconfig content'
     required: true
+  workingDirectory:
+    description: 'Working directory inside the repo'
+    required: true
 
 runs:
   using: 'composite'
@@ -41,7 +44,7 @@ runs:
         AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.awsSecretAccessKey }}
         BACKEND_KEY: "gitops-demo/${{ inputs.environment }}/${{ inputs.branch }}/application-key.tfstate"
-      working-directory: terraform/applications/${{ inputs.environment }}
+      working-directory: ${{ inputs.workingDirectory }}
       shell: bash
 
     - name: Terraform Destroy
@@ -52,5 +55,5 @@ runs:
       env:
         AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.awsSecretAccessKey }}
-      working-directory: terraform/applications/${{ inputs.environment }}
+      working-directory: ${{ inputs.workingDirectory }}
       shell: bash

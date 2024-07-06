@@ -6,6 +6,7 @@ name: Deploy Infrastructure
 #      - main
 #    paths:
 #      - 'terraform/**'
+#      - 'argocd/**'
 
 jobs:
   set-environment:

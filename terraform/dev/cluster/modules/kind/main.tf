@@ -1,7 +1,3 @@
-locals {
-  kubeconfig_path_expanded = abspath("${path.root}/kubeconfig-${var.cluster_name}.yaml")
-}
-
 resource "kind_cluster" "default" {
   name            = var.cluster_name
   wait_for_ready  = true
@@ -30,4 +26,8 @@ resource "kind_cluster" "default" {
       image = "kindest/node:v1.23.4"
     }
   }
+}
+
+locals {
+  kubeconfig_path_expanded = abspath("${path.root}/kubeconfig-${var.cluster_name}.yaml")
 }
