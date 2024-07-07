@@ -24,7 +24,6 @@ provider "helm" {
 provider "argocd" {
   username  = "admin"
   password  = data.kubernetes_secret.argocd_initial_admin_secret.data["password"]
-  config_path = var.kubeconfig_path
 }
 
 provider "kubernetes" {
