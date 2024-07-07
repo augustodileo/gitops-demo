@@ -36,7 +36,7 @@ module "argocd_applications" {
   }
 
   application       = var.applications
-  repo_url          = var.repo_url
+  repo_url          = "https://github.com/${var.repo_url}"
   path              = var.path
   project           = "applications"
   target_revision   = var.target_revision
