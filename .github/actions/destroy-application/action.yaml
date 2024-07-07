@@ -50,6 +50,12 @@ runs:
       working-directory: ${{ inputs.workingDirectory }}
       shell: bash
 
+    - name: Find Application Directories
+      run: |
+        applications=$(find applications/${{ inputs.environment }} -type f -name 'application.yaml' -exec dirname {} \; | xargs -I {} basename {})
+        echo "applications=[$(echo $applications | sed 's/ /, /g')]" >> $GITHUB_ENV
+      shell: bash
+
     - name: Terraform Destroy
       run: |
         terraform destroy \

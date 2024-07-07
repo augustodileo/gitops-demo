@@ -51,10 +51,10 @@ runs:
       shell: bash
 
     - name: Find Application Directories
-      id: find-apps
       run: |
         applications=$(find applications/${{ inputs.environment }} -type f -name 'application.yaml' -exec dirname {} \; | xargs -I {} basename {})
         echo "applications=[$(echo $applications | sed 's/ /, /g')]" >> $GITHUB_ENV
+      shell: bash
 
     - name: Terraform Apply
       run: |
