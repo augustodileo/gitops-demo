@@ -11,6 +11,7 @@ module "argocd" {
     chart            = "argo-cd"
     create_namespace = true
     wait             = true
+    deploy           = 1
   }
 
   # No values file provided, defaults will be used
