@@ -1,4 +1,6 @@
 resource "argocd_application" "application" {
+  depends_on = [argocd_project.applications]
+
   for_each = { for app in var.application : app => app }
 
   metadata {
@@ -25,6 +27,30 @@ resource "argocd_application" "application" {
         prune = true
         self_heal = true
       }
+    }
+  }
+}
+
+resource "argocd_project" "applications" {
+  metadata {
+    name      = var.project
+    namespace = "argocd"
+  }
+
+  spec {
+    description = "Project for managing application deployments"
+
+    source_repos = ["*"]
+    destinations {
+      server    = "https://kubernetes.default.svc"
+      namespace = "argocd"
+    }
+    cluster_resource_whitelist {
+      group = "argoproj.io/v1alpha1"
+      kind  = "Application"
+    }
+    orphaned_resources {
+      warn = true
     }
   }
 }
