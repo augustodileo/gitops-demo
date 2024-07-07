@@ -10,13 +10,3 @@ terraform {
     }
   }
 }
-
-provider "argocd" {
-  username  = "admin"
-  password  = var.argocd_admin_password
-  port_forward = true
-}
-
-provider "kubernetes" {
-  config_path = var.kubeconfig_path
-}

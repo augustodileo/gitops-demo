@@ -31,7 +31,16 @@ module "argocd_applications" {
   depends_on = [module.argocd]
   source = "./modules/argocd_application"
 
-  # Provider vars
+  provider "argocd" {
+    username  = "admin"
+    password  = var.argocd_admin_password
+    port_forward = true
+  }
+
+  provider "kubernetes" {
+    config_path = var.kubeconfig_path
+  }
+
   argocd_admin_password = local.argocd_admin_password
   kubeconfig_path   = var.kubeconfig_path
 
