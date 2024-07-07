@@ -7,8 +7,8 @@ module "argocd" {
 
   app = {
     name             = "argocd"
+    version          = "3.27.1"
     chart            = "argo-cd"
-    version          = "3.27.1" # Specify the version you want to deploy
     create_namespace = true
     wait             = true
   }
@@ -19,7 +19,7 @@ module "argocd" {
 data "kubernetes_secret" "argocd_initial_admin_secret" {
   metadata {
     name      = "argocd-initial-admin-secret"
-    namespace = module.argocd.app["name"]
+    namespace = module.argocd["namespace"]
   }
 }
 
