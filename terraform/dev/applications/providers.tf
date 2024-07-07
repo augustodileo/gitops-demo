@@ -15,12 +15,19 @@ terraform {
   }
 }
 
+provider "helm" {
+  kubernetes {
+    config_path = var.kubeconfig_path
+  }
+}
+
 provider "argocd" {
   username  = "admin"
   password  = base64decode(data.kubernetes_secret.argocd_initial_admin_secret.data["password"])
   port_forward = true
 }
 
-provider "kubernetes" {
-  config_path = var.kubeconfig_path
-}
+provider "helm" {
+  kubernetes {
+    config_path = var.kubeconfig_path
+  }
