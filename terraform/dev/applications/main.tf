@@ -31,14 +31,9 @@ module "argocd_applications" {
   depends_on = [module.argocd]
   source = "./modules/argocd_application"
 
-  provider "argocd" {
-    username  = "admin"
-    password  = base64decode(data.kubernetes_secret.argocd_initial_admin_secret.data["password"])
-    port_forward = true
-  }
-
-  provider "kubernetes" {
-    config_path = var.kubeconfig_path
+  providers = {
+    argocd     = argocd
+    kubernetes = kubernetes
   }
 
   argocd_admin_password = local.argocd_admin_password
