@@ -25,8 +25,7 @@ provider "argocd" {
   username  = "admin"
   password  = data.kubernetes_secret.argocd_initial_admin_secret.data["password"]
   port_forward = true
-}
-
-provider "kubernetes" {
-  config_path = var.kubeconfig_path
+  kubernetes {
+    config_path = var.kubeconfig_path
+  }
 }
