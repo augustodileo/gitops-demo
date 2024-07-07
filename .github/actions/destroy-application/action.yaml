@@ -60,9 +60,8 @@ runs:
       run: |
         terraform destroy \
           -auto-approve \
-          -auto-approve \
           -var "kubeconfig_path=${{ inputs.kubeconfigPath }}" \
-          -var "applications=${{ env.applications }}" \
+          -var 'applications=${{ env.applications }}' \
           -var "path=argocd/${{ inputs.environment }}" \
           -var "repo_url=${{ inputs.repoUrl }}" \
           -var "target_revision=${{ inputs.branch }}" \
