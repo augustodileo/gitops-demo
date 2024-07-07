@@ -5,7 +5,7 @@ variable "kubeconfig_path" {
 
 variable "applications" {
   description = "List of application names"
-  type        = list(string)
+  type        = list
 }
 
 variable "path" {

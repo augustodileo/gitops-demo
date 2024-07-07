@@ -36,9 +36,9 @@ module "argocd_applications" {
     kubernetes = kubernetes
   }
 
-  application       = "${var.applications}"
-  repo_url          = "${var.repo_url}"
-  path              = "${var.path}"
+  application       = var.applications
+  repo_url          = var.repo_url
+  path              = var.path
   project           = "applications"
-  target_revision   = "${var.target_revision}"
+  target_revision   = var.target_revision
 }
