@@ -64,9 +64,10 @@ runs:
           -var 'applications=${{ env.applications }}' \
           -var "path=argocd/${{ inputs.environment }}" \
           -var "repo_url=${{ inputs.repoUrl }}" \
-          -var "target_revision=${{ inputs.branch }}" \
+          -var "target_revision=${{ inputs.branch }}"
       env:
         AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.awsSecretAccessKey }}
+        KUBECONFIG: ${{ inputs.kubeconfigPath }}
       working-directory: ${{ inputs.workingDirectory }}
       shell: bash
