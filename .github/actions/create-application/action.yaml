@@ -53,8 +53,8 @@ runs:
     - name: Find Application Directories
       run: |
         applications=$(find argocd/${{ inputs.environment }} -type f -name 'application.yaml' -exec dirname {} \; | xargs -I {} basename {})
-        echo "applications=[$(echo $applications | sed 's/\([^ ]*\)/"\1"/g' | sed 's/ /,/g')]"
-        echo "applications=$applications" >> $GITHUB_ENV
+        applications_list=[$(echo $applications | sed 's/\([^ ]*\)/"\1"/g' | sed 's/ /,/g')]"
+        echo "applications=$applications_list" >> $GITHUB_ENV
 
       shell: bash
 
