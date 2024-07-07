@@ -27,7 +27,7 @@ data "kubernetes_secret" "argocd_initial_admin_secret" {
 }
 
 module "argocd_applications" {
-  depends_on = [module.argocd]
+  depends_on = [module.argocd, data.kubernetes_secret.argocd_initial_admin_secret]
   source = "./modules/argocd_application"
 
   providers = {
