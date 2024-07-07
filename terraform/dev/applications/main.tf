@@ -18,14 +18,12 @@ module "argocd" {
 }
 
 data "kubernetes_secret" "argocd_initial_admin_secret" {
+  depends_on = [module.argocd]
+
   metadata {
     name      = "argocd-initial-admin-secret"
     namespace = "argocd"
   }
-}
-
-locals {
-  argocd_admin_password = base64decode(data.kubernetes_secret.argocd_initial_admin_secret.data["password"])
 }
 
 module "argocd_applications" {
