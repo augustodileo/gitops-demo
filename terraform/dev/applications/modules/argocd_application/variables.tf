@@ -1,6 +1,6 @@
 variable "application" {
   description = "List of application names"
-  type        = list
+  type        = list(string)
 }
 
 variable "repo_url" {
