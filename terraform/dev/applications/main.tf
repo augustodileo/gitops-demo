@@ -36,10 +36,6 @@ module "argocd_applications" {
     kubernetes = kubernetes
   }
 
-  argocd_admin_password = local.argocd_admin_password
-  kubeconfig_path   = var.kubeconfig_path
-
-  # Module vars
   application       = var.applications 
   repo_url          = var.repo_url
   path              = var.path
