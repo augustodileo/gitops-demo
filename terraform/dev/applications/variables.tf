@@ -8,12 +8,12 @@ variable "applications" {
   type        = list(string)
 }
 
-variable "repo_url" {
-  description = "Environment of the application"
+variable "path" {
+  description = "Path of the applications folder"
   type        = string
 }
 
-variable "path" {
+variable "repo_url" {
   description = "Environment of the application"
   type        = string
 }

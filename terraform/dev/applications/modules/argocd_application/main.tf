@@ -14,7 +14,7 @@ resource "argocd_application" "applications" {
 
     source {
       repo_url        = var.repo_url
-      path            = var.path
+      path            = "${var.path}/${var.application}"
       target_revision = var.target_revision
     }
 

@@ -26,6 +26,9 @@ inputs:
   kubeconfigContent:
     description: 'Kubeconfig content'
     required: true
+  repoUrl:
+    description: 'Repository URL for the Application manifests'
+    required: true
   workingDirectory:
     description: 'Working directory inside the repo'
     required: true
@@ -51,7 +54,12 @@ runs:
       run: |
         terraform destroy \
           -auto-approve \
-          -var "kubeconfig_path=${{ inputs.kubeconfigPath }}"
+          -auto-approve \
+          -var "kubeconfig_path=${{ inputs.kubeconfigPath }}" \
+          -var "applications=${{ env.applications }}" \
+          -var "path=argocd/${{ inputs.environment }}" \
+          -var "repo_url=${{ inputs.repoUrl }}" \
+          -var "target_revision=${{ inputs.branch }}" \
       env:
         AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.awsSecretAccessKey }}
