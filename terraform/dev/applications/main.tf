@@ -33,7 +33,7 @@ module "argocd_applications" {
 
   provider "argocd" {
     username  = "admin"
-    password  = var.argocd_admin_password
+    password  = base64decode(data.kubernetes_secret.argocd_initial_admin_secret.data["password"])
     port_forward = true
   }
 

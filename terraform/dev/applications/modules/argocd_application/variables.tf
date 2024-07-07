@@ -1,18 +1,3 @@
-# Provider vars
-
-variable "argocd_admin_password" {
-  description = "ArgoCD admin password"
-  type        = string
-  sensitive   = true
-}
-
-variable "kubeconfig_path" {
-  description = "Path to the kubeconfig file"
-  type        = string
-}
-
-# Module vars
-
 variable "applications" {
   description = "List of application names"
   type        = list(string)
