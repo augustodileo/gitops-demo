@@ -23,7 +23,7 @@ provider "helm" {
 
 provider "argocd" {
   username  = "admin"
-  password  = base64decode(data.kubernetes_secret.argocd_initial_admin_secret.data["password"])
+  password  = data.kubernetes_secret.argocd_initial_admin_secret.data["password"]
   port_forward = true
 }
 
