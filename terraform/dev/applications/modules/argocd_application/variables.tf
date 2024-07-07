@@ -13,9 +13,9 @@ variable "kubeconfig_path" {
 
 # Module vars
 
-variable "application" {
-  description = "Application name"
-  type        = string
+variable "applications" {
+  description = "List of application names"
+  type        = list(string)
 }
 
 variable "repo_url" {
@@ -24,7 +24,7 @@ variable "repo_url" {
 }
 
 variable "path" {
-  description = "Path in the repository"
+  description = "Path tp the folder"
   type        = string
 }
 

@@ -31,16 +31,14 @@ module "argocd_applications" {
   depends_on = [module.argocd]
   source = "./modules/argocd_application"
 
-  for_each = { for app in var.applications : app => app }
-
   # Provider vars
   argocd_admin_password = local.argocd_admin_password
   kubeconfig_path   = var.kubeconfig_path
 
   # Module vars
-  application       = each.key
+  application       = var.applications 
   repo_url          = var.repo_url
-  path              = "${var.path}/${each.key}"
-  project           = "default"
+  path              = var.path
+  project           = "applications"
   target_revision   = var.target_revision
 }
