@@ -1,6 +1,25 @@
-module "argocd" {
-  source  = "terraform-module/release/helm"
-  version = "2.8.2"
+module "argocd_applications" {
+  source = "./modules/argocd_application"
+
+  providers = {
+    argocd     = argocd
+  }
+
+  application       = var.applications
+  argocd_namespace  = module.argocd_installation.namespace
+  repo_url          = "https://github.com/${var.repo_url}"
+  path              = var.path
+  project           = "applications"
+  target_revision   = var.target_revision
+}
+
+module "argocd_installation" {
+  source = "./modules/argocd_installation"
+
+  providers = {
+    kubernetes      = kubernetes
+    helm            = helm
+  }
 
   namespace  = "argocd"
   repository = "https://argoproj.github.io/argo-helm"
@@ -13,31 +32,4 @@ module "argocd" {
     wait             = true
     deploy           = 1
   }
-
-  # No values file provided, defaults will be used
-}
-
-data "kubernetes_secret" "argocd_initial_admin_secret" {
-  depends_on = [module.argocd]
-
-  metadata {
-    name      = "argocd-initial-admin-secret"
-    namespace = "argocd"
-  }
-}
-
-module "argocd_applications" {
-  depends_on = [module.argocd, data.kubernetes_secret.argocd_initial_admin_secret]
-  source = "./modules/argocd_application"
-
-  providers = {
-    argocd     = argocd
-    kubernetes = kubernetes
-  }
-
-  application       = var.applications
-  repo_url          = "https://github.com/${var.repo_url}"
-  path              = var.path
-  project           = "applications"
-  target_revision   = var.target_revision
 }

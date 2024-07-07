@@ -3,6 +3,11 @@ variable "application" {
   type        = list(string)
 }
 
+variable "argocd_namespace" {
+  description = "Namespace for ArgoCD installation"
+  type        = string
+}
+
 variable "repo_url" {
   description = "Repository URL"
   type        = string

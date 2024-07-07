@@ -1,19 +1,17 @@
 resource "argocd_application" "application" {
-  depends_on = [argocd_project.applications]
-
   for_each = { for app in var.application : app => app }
 
   metadata {
     name      = "${each.key}-argocd"
-    namespace = "argocd"
+    namespace = var.argocd_namespace
   }
 
   spec {
-    project     = var.project
+    project     = argocd_project.applications.metadata[0].name
 
     destination {
       server = "https://kubernetes.default.svc"
-      namespace = "argocd"
+      namespace = var.argocd_namespace
     }
 
     source {
@@ -34,7 +32,7 @@ resource "argocd_application" "application" {
 resource "argocd_project" "applications" {
   metadata {
     name      = var.project
-    namespace = "argocd"
+    namespace = var.argocd_namespace
   }
 
   spec {
@@ -43,7 +41,7 @@ resource "argocd_project" "applications" {
     source_repos = ["*"]
     destination {
       server    = "https://kubernetes.default.svc"
-      namespace = "argocd"
+      namespace = var.argocd_namespace
     }
     cluster_resource_whitelist {
       group = "argoproj.io/v1alpha1"
