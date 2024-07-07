@@ -41,7 +41,7 @@ resource "argocd_project" "applications" {
     description = "Project for managing application deployments"
 
     source_repos = ["*"]
-    destinations {
+    destination {
       server    = "https://kubernetes.default.svc"
       namespace = "argocd"
     }
