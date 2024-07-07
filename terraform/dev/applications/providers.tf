@@ -1,5 +1,9 @@
 terraform {
   required_providers {
+    argocd = {
+      source = "oboukili/argocd"
+      version = "6.1.1"
+    }
     helm = {
       source = "hashicorp/helm"
       version = "2.4.1"
