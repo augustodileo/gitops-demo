@@ -20,7 +20,7 @@ module "argocd" {
 data "kubernetes_secret" "argocd_initial_admin_secret" {
   metadata {
     name      = "argocd-initial-admin-secret"
-    namespace = module.argocd["namespace"]
+    namespace = "argocd"
   }
 }
 
