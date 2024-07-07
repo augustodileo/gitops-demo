@@ -61,7 +61,7 @@ runs:
         terraform apply \
           -auto-approve \
           -var "kubeconfig_path=${{ inputs.kubeconfigPath }}" \
-          -var "applications=${{ env.applications }}" \
+          -var "applications=["prometheus","grafana"]" \
           -var "path=argocd/${{ inputs.environment }}" \
           -var "repo_url=${{ inputs.repoUrl }}" \
           -var "target_revision=${{ inputs.branch }}" \
