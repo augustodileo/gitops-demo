@@ -1,5 +1,5 @@
-resource "argocd_application" "applications" {
-  for_each = { for app in var.applications : app => app }
+resource "argocd_application" "application" {
+  for_each = { for app in var.application : app => app }
 
   metadata {
     name      = "${each.key}-argocd"

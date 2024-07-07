@@ -1,4 +1,4 @@
-variable "applications" {
+variable "application" {
   description = "List of application names"
   type        = list(string)
 }
