@@ -27,7 +27,6 @@ provider "argocd" {
   port_forward = true
 }
 
-provider "helm" {
-  kubernetes {
-    config_path = var.kubeconfig_path
-  }
+provider "kubernetes" {
+  config_path = var.kubeconfig_path
+}
