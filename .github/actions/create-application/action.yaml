@@ -2,6 +2,9 @@ name: 'Terraform Application Creation'
 description: 'Initialize and apply Terraform configuration for application deployment'
 
 inputs:
+  applicationsList:
+    description: 'List of applications to install'
+    required: true
   awsAccessKeyId:
     description: 'AWS Access Key ID'
     required: true
@@ -50,18 +53,12 @@ runs:
       working-directory: ${{ inputs.workingDirectory }}
       shell: bash
 
-    - name: Find Application Directories
-      run: |
-        applications=$(find argocd/${{ inputs.environment }} -type f -name 'application.yaml' -exec dirname {} \; | xargs -I {} basename {})
-        echo "applications=[$(echo $applications | sed 's/\([^ ]*\)/"\1"/g' | sed 's/ /,/g')]" >> $GITHUB_ENV
-      shell: bash
-
     - name: Terraform Apply
       run: |
         terraform apply \
           -auto-approve \
           -var "kubeconfig_path=${{ inputs.kubeconfigPath }}" \
-          -var 'applications=${{ env.applications }}' \
+          -var 'applications_list=${{ inputs.applicationsList }}' \
           -var "path=argocd/${{ inputs.environment }}" \
           -var "repo_url=${{ inputs.repoUrl }}" \
           -var "target_revision=${{ inputs.branch }}"

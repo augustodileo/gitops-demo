@@ -3,7 +3,7 @@ variable "kubeconfig_path" {
   type        = string
 }
 
-variable "applications" {
+variable "applications_list" {
   description = "List of application names"
   type        = list(string)
 }

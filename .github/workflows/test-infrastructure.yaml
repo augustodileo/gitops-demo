@@ -67,10 +67,17 @@ jobs:
           environment: ${{ vars.ENVIRONMENT_NAME }}
           workingDirectory: "terraform/${{ vars.ENVIRONMENT_NAME }}/cluster"
 
+    - name: Find Application Directories
+      run: |
+        applications=$(find argocd/${{ inputs.environment }} -type f -name 'application.yaml' -exec dirname {} \; | xargs -I {} basename {})
+        echo "applicationsList=[$(echo $applications | sed 's/\([^ ]*\)/"\1"/g' | sed 's/ /,/g')]" >> $GITHUB_ENV
+      shell: bash
+
       - name: Create Application
         id: create-application
         uses: ./.github/actions/create-application
         with:
+          applicationsList: ${{ env.applicationsList }}
           awsAccessKeyId: ${{ vars.AWS_ACCESS_KEY_ID }}
           awsBucket: ${{ vars.AWS_BUCKET }}
           awsDynamoDBTable: ${{ vars.AWS_DYNAMODB_TABLE }}
@@ -99,6 +106,7 @@ jobs:
         if: always()
         uses: ./.github/actions/destroy-application
         with:
+          applicationsList: ${{ env.applicationsList }}
           awsAccessKeyId: ${{ vars.AWS_ACCESS_KEY_ID }}
           awsBucket: ${{ vars.AWS_BUCKET }}
           awsDynamoDBTable: ${{ vars.AWS_DYNAMODB_TABLE }}

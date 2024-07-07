@@ -1,6 +1,6 @@
 variable "application" {
   description = "List of application names"
-  type        = list(string)
+  type        = string
 }
 
 variable "argocd_namespace" {

@@ -1,8 +1,7 @@
 resource "argocd_application" "application" {
-  for_each = { for app in var.application : app => app }
 
   metadata {
-    name      = "${each.key}-argocd"
+    name      = "${var.application}-argocd"
     namespace = var.argocd_namespace
   }
 
@@ -16,7 +15,7 @@ resource "argocd_application" "application" {
 
     source {
       repo_url        = var.repo_url
-      path            = "${var.path}/${each.key}"
+      path            = "${var.path}/${var.application}"
       target_revision = var.target_revision
     }
 

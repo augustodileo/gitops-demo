@@ -1,11 +1,13 @@
 module "argocd_applications" {
   source = "./modules/argocd_application"
 
+  for_each = { for app in var.applications_list : app => app }
+
   providers = {
     argocd     = argocd
   }
 
-  application       = var.applications
+  application       = each.key
   argocd_namespace  = module.argocd_installation.namespace
   repo_url          = "https://github.com/${var.repo_url}"
   path              = var.path
