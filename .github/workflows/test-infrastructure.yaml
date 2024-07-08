@@ -70,6 +70,7 @@ jobs:
           awsRegion: ${{ vars.AWS_REGION }}
           awsSecretAccessKey: ${{ secrets.AWS_SECRET_KEY }}
           branch: ${{ github.ref_name }}
+          clusterName: ${{ vars.CLUSTER_NAME }}
           environment: ${{ vars.ENVIRONMENT_NAME }}
           repoUrl: ${{ github.repository }}
           workingDirectory: "terraform/${{ vars.ENVIRONMENT_NAME }}/main"
@@ -98,6 +99,7 @@ jobs:
           awsRegion: ${{ vars.AWS_REGION }}
           awsSecretAccessKey: ${{ secrets.AWS_SECRET_KEY }}
           branch: ${{ github.ref_name }}
+          clusterName: ${{ vars.CLUSTER_NAME }}
           environment: ${{ vars.ENVIRONMENT_NAME }}
           repoUrl: ${{ github.repository }}
           workingDirectory: "terraform/${{ vars.ENVIRONMENT_NAME }}/main"
