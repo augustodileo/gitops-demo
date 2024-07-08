@@ -37,7 +37,9 @@ jobs:
             echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
             echo "environment=${{ inputs.environment }}" >> $GITHUB_OUTPUT
           else
-            if git diff --name-only origin/main...HEAD | grep -q 'terraform/cluster-creation/prod\|terraform/application/prod'; then
+            MODIFIED_FOLDERS=$(git diff --name-only origin/main...HEAD | awk -F'/' '{print $1"/"$2}' | sort | uniq)
+            echo "MODIFIED_FOLDERS=$MODIFIED_FOLDERS"
+            if echo "$MODIFIED_FOLDERS" | grep -q 'terraform/prod\|argocd/prod'; then
               echo "environment=prod" >> $GITHUB_OUTPUT
             else
               echo "environment=dev" >> $GITHUB_OUTPUT
