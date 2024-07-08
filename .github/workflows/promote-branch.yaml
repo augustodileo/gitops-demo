@@ -24,6 +24,8 @@ jobs:
           git config --global user.name "github-actions"
           git config --global user.email "github-actions@github.com"
           git checkout -b ${PROMOTE_BRANCH}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Copy files from dev to prod
         run: |
@@ -36,9 +38,11 @@ jobs:
           git add argocd/prod/*
           git commit -m "Promote ${MERGED_BRANCH_NAME} to prod"
           git push origin ${PROMOTE_BRANCH}
-
-      - name: Create PR
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create PR
         run: |
           gh pr create --title "Promote ${MERGED_BRANCH_NAME} to prod" --body "This PR promotes changes from ${MERGED_BRANCH_NAME} to prod" --base main --head ${PROMOTE_BRANCH}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
