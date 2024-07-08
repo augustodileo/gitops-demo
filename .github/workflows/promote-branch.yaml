@@ -16,10 +16,9 @@ jobs:
 
       - name: Delete existing promotion branches and PRs
         run: |
-          gh auth login --with-token <<< "${{ secrets.GITHUB_TOKEN }}"
           for branch in $(gh api graphql -f query='
             {
-              repository(owner: "YOUR_GITHUB_USERNAME", name: "YOUR_REPO_NAME") {
+              repository(owner: "augustodileo", name: "gitops-demo") {
                 refs(refPrefix: "refs/heads/promote-branch-") {
                   nodes {
                     name
