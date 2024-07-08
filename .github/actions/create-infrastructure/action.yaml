@@ -93,7 +93,7 @@ runs:
         kubeconfigPath=$(terraform output -raw kubeconfig_path)
 
         echo "argocdInitialAdminSecret=$argocdInitialAdminSecret" >> $GITHUB_OUTPUT
-        echo "kubeconfigContent=$kubeconfigContent" >> $GITHUB_OUTPUT
+        #echo "kubeconfigContent=$kubeconfigContent" >> $GITHUB_OUTPUT
         echo "kubeconfigPath=$kubeconfigPath" >> $GITHUB_OUTPUT
       env:
         AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}

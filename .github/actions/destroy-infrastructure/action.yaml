@@ -59,6 +59,7 @@ runs:
 
     - name: Terraform Destroy with Retry
       run: |
+        set +e  # Allow the script to continue on errors
         MAX_RETRIES=5
         DELAY=30
         retry_count=0
