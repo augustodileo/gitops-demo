@@ -36,20 +36,14 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Clean prod directories
+      - name: Synchronize dev to prod directories
         run: |
-          git rm -rf terraform/prod/*
-          git rm -rf argocd/prod/*
+          rsync -av --delete terraform/dev/ terraform/prod/
+          rsync -av --delete argocd/dev/ argocd/prod/
 
-      - name: Copy files from dev to prod
+      - name: Stage and commit all changes
         run: |
-          cp -r terraform/dev/* terraform/prod/
-          cp -r argocd/dev/* argocd/prod/
-          
-      - name: Commit and push changes
-        run: |
-          git add terraform/prod/*
-          git add argocd/prod/*
+          git add -A
           git commit -m "Promote ${MERGED_BRANCH_NAME} to prod"
           git push origin ${PROMOTE_BRANCH}
         env:
