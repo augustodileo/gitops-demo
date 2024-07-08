@@ -29,8 +29,8 @@ jobs:
 
       - name: Copy files from dev to prod
         run: |
-          cp -r terraform/dev/* terraform/prod/
-          cp -r argocd/dev/* argocd/prod/
+          rsync -a --delete terraform/dev/ terraform/prod/
+          rsync -a --delete argocd/dev/ argocd/prod/
           
       - name: Commit and push changes
         run: |
