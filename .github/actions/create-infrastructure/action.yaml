@@ -74,7 +74,7 @@ runs:
         terraform apply \
           -auto-approve \
           -var 'applications_list=${{ inputs.applicationsList }}' \
-          -var "cluster_name=${{ inputs.clusterName }}"
+          -var "cluster_name=${{ inputs.clusterName }}" \
           -var "kubeconfig_path=${{ inputs.kubeconfigPath }}" \
           -var "path=argocd/${{ inputs.environment }}" \
           -var "repo_url=${{ inputs.repoUrl }}" \
