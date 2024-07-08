@@ -22,6 +22,7 @@ jobs:
   set-environment:
     runs-on: ubuntu-latest
     outputs:
+      branch: ${{ steps.set-environment.outputs.branch }}
       environment: ${{ steps.set-environment.outputs.environment }}
     steps:
       - name: Checkout code
