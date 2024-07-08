@@ -26,7 +26,7 @@ jobs:
       - name: Create promotion branch
         run: |
           MERGED_BRANCH_NAME=$(echo "${{ github.event.pull_request.head.ref }}" | sed 's/[^a-zA-Z0-9]/-/g')
-          PROMOTE_BRANCH="promote-${MERGED_BRANCH_NAME}"
+          PROMOTE_BRANCH="promote-branch-${MERGED_BRANCH_NAME}"
           echo "MERGED_BRANCH_NAME=$MERGED_BRANCH_NAME" >> $GITHUB_ENV
           echo "PROMOTE_BRANCH=$PROMOTE_BRANCH" >> $GITHUB_ENV
 
