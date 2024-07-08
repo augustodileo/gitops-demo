@@ -16,7 +16,17 @@ jobs:
 
       - name: Delete existing promotion branches and PRs
         run: |
-          for branch in $(gh repo view --json refs --jq '.refs.nodes[] | select(.name | startswith("promote-branch-")).name'); do
+          gh auth login --with-token <<< "${{ secrets.GITHUB_TOKEN }}"
+          for branch in $(gh api graphql -f query='
+            {
+              repository(owner: "YOUR_GITHUB_USERNAME", name: "YOUR_REPO_NAME") {
+                refs(refPrefix: "refs/heads/promote-branch-") {
+                  nodes {
+                    name
+                  }
+                }
+              }
+            }' --jq '.data.repository.refs.nodes[].name'); do
             gh pr list --head "$branch" --json number --jq '.[].number' | xargs -I {} gh pr close {}
             git push origin --delete "$branch"
           done
