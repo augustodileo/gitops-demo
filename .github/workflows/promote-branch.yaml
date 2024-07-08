@@ -14,6 +14,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Delete existing promotion branches and PRs
+        run: |
+          for branch in $(gh repo view --json refs --jq '.refs.nodes[] | select(.name | startswith("promote-branch-")).name'); do
+            gh pr list --head "$branch" --json number --jq '.[].number' | xargs -I {} gh pr close {}
+            git push origin --delete "$branch"
+          done
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Create promotion branch
         run: |
           MERGED_BRANCH_NAME=$(echo "${{ github.event.pull_request.head.ref }}" | sed 's/[^a-zA-Z0-9]/-/g')
@@ -27,10 +36,15 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Clean prod directories
+        run: |
+          rm -rf terraform/prod/*
+          rm -rf argocd/prod/*
+
       - name: Copy files from dev to prod
         run: |
-          rsync -a --delete terraform/dev/ terraform/prod/
-          rsync -a --delete argocd/dev/ argocd/prod/
+          cp -r terraform/dev/* terraform/prod/
+          cp -r argocd/dev/* argocd/prod/
           
       - name: Commit and push changes
         run: |
