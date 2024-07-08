@@ -1,5 +1,5 @@
-name: 'Terraform Application Destroy'
-description: 'Initialize and destroy Terraform configuration for application'
+name: 'Terraform Infrastructure Creation'
+description: 'Initialize and apply Terraform configuration'
 
 inputs:
   applicationsList:
@@ -23,18 +23,34 @@ inputs:
   branch:
     description: 'Branch for the infrastructure'
     required: true
+  clusterName:
+    description: 'Cluster name'
+    required: true
   environment:
     description: 'Environment for the infrastructure'
     required: true
-  kubeconfigContent:
+  kubeconfigPath:
     description: 'Kubeconfig content'
     required: true
+    default: ""
   repoUrl:
     description: 'Repository URL for the Application manifests'
     required: true
   workingDirectory:
     description: 'Working directory inside the repo'
     required: true
+
+outputs:
+  argocdInitialAdminSecret:
+    description: 'ArgoCD admin initial password'
+    value: ${{ steps.output.outputs.argocdInitialAdminSecret }}
+  kubeconfigContent:
+    description: 'Kubeconfig content'
+    value: ${{ steps.output.outputs.kubeconfigContent }}
+  kubeconfigPath:
+    description: 'Kubeconfig file path'
+    value: ${{ steps.output.outputs.kubeconfigPath }}
+  
 
 runs:
   using: 'composite'
@@ -53,18 +69,30 @@ runs:
       working-directory: ${{ inputs.workingDirectory }}
       shell: bash
 
-    - name: Terraform Destroy
+    - name: Terraform Apply
       run: |
-        terraform destroy \
+        terraform apply \
           -auto-approve \
-          -var "kubeconfig_path=${{ inputs.kubeconfigPath }}" \
           -var 'applications_list=${{ inputs.applicationsList }}' \
+          -var "cluster_name=${{ inputs.clusterName }}"
+          -var "kubeconfig_path=${{ inputs.kubeconfigPath }}" \
           -var "path=argocd/${{ inputs.environment }}" \
           -var "repo_url=${{ inputs.repoUrl }}" \
           -var "target_revision=${{ inputs.branch }}"
       env:
         AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.awsSecretAccessKey }}
-        KUBECONFIG: ${{ inputs.kubeconfigPath }}
+      working-directory: ${{ inputs.workingDirectory }}
+      shell: bash
+
+    - name: Terraform Output
+      id: output
+      run: |
+        echo "argocdInitialAdminSecret=$(terraform output -raw argocd_initial_admin_password)" >> $GITHUB_OUTPUT
+        echo "kubeconfigContent=$(terraform output -raw kubeconfig_content)" >> $GITHUB_OUTPUT
+        echo "kubeconfigPath=$(terraform output -raw kubeconfig_path)" >> $GITHUB_OUTPUT
+      env:
+        AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}
+        AWS_SECRET_ACCESS_KEY: ${{ inputs.awsSecretAccessKey }}
       working-directory: ${{ inputs.workingDirectory }}
       shell: bash

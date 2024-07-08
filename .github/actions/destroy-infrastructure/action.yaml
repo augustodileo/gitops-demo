@@ -1,7 +1,10 @@
-name: 'Terraform Cluster Creation'
-description: 'Initialize and apply Terraform configuration for cluster creation'
+name: 'Terraform Infrastructure Creation'
+description: 'Initialize and apply Terraform configuration'
 
 inputs:
+  applicationsList:
+    description: 'List of applications to install'
+    required: true
   awsAccessKeyId:
     description: 'AWS Access Key ID'
     required: true
@@ -9,7 +12,7 @@ inputs:
     description: 'AWS Bucket name'
     required: true
   awsDynamoDBTable:
-    description: 'AWS DymamoDB Table name'
+    description: 'AWS DynamoDB Table name'
     required: true
   awsRegion:
     description: 'AWS S3 Region'
@@ -26,14 +29,16 @@ inputs:
   environment:
     description: 'Environment for the infrastructure'
     required: true
+  kubeconfigPath:
+    description: 'Kubeconfig content'
+    required: true
+    default: ""
+  repoUrl:
+    description: 'Repository URL for the Application manifests'
+    required: true
   workingDirectory:
     description: 'Working directory inside the repo'
     required: true
-
-outputs:
-  kubeconfigPath:
-    description: 'Kubeconfig content'
-    value: ${{ steps.output.outputs.kubeconfigPath }}
 
 runs:
   using: 'composite'
@@ -42,32 +47,26 @@ runs:
       run: |
         terraform init \
           -backend-config="bucket=${{ inputs.awsBucket }}" \
-          -backend-config="dynamodb_table=${{ inputs.awsDynamoDBTable }}" \
           -backend-config="key=${{ env.BACKEND_KEY }}" \
-          -backend-config="region=${{ inputs.awsRegion }}"
+          -backend-config="region=${{ inputs.awsRegion }}" \
+          -backend-config="dynamodb_table=${{ inputs.awsDynamoDBTable }}"
       env:
         AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.awsSecretAccessKey }}
-        BACKEND_KEY: "gitops-demo/${{ inputs.environment }}/${{ inputs.branch }}/cluster.tfstate"
+        BACKEND_KEY: "gitops-demo/${{ inputs.environment }}/${{ inputs.branch }}/application-key.tfstate"
       working-directory: ${{ inputs.workingDirectory }}
       shell: bash
 
-    - name: Terraform Apply
-      id: apply
+    - name: Terraform Destroy
       run: |
-        terraform apply \
+        terraform destroy \
           -auto-approve \
-          -var="cluster_name=${{ inputs.clusterName }}"
-      env:
-        AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}
-        AWS_SECRET_ACCESS_KEY: ${{ inputs.awsSecretAccessKey }}
-      working-directory: ${{ inputs.workingDirectory }}
-      shell: bash
-
-    - name: Terraform Output
-      id: output
-      run: |
-        echo "kubeconfigPath=$(terraform output -raw kubeconfig_path)" >> $GITHUB_OUTPUT
+          -var 'applications_list=${{ inputs.applicationsList }}' \
+          -var "cluster_name=${{ inputs.clusterName }}"
+          -var "kubeconfig_path=${{ inputs.kubeconfigPath }}" \
+          -var "path=argocd/${{ inputs.environment }}" \
+          -var "repo_url=${{ inputs.repoUrl }}" \
+          -var "target_revision=${{ inputs.branch }}"
       env:
         AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.awsSecretAccessKey }}

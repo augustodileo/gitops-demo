@@ -16,7 +16,7 @@ terraform.rc
 .terraform.lock.hcl
 
 # Local directory for Kubernetes config and other temporary files
-kubeconfig
+*kubeconfig*
 temp/
 
 # Ignore sensitive files
