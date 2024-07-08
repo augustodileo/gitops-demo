@@ -31,14 +31,15 @@ jobs:
         id: set-environment
         run: |
           if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
             echo "environment=${{ inputs.environment }}" >> $GITHUB_OUTPUT
           else
             if git diff --name-only origin/main...HEAD | grep -q 'terraform/cluster-creation/prod\|terraform/application/prod'; then
               echo "environment=prod" >> $GITHUB_OUTPUT
             else
-              echo "::set-output name=environment::dev"
               echo "environment=dev" >> $GITHUB_OUTPUT
             fi
+            echo "branch=${{ github.event.pull_request.head.ref }}" >> $GITHUB_OUTPUT
           fi
   
   deployment:
@@ -70,7 +71,7 @@ jobs:
           awsDynamoDBTable: ${{ vars.AWS_DYNAMODB_TABLE }}
           awsRegion: ${{ vars.AWS_REGION }}
           awsSecretAccessKey: ${{ secrets.AWS_SECRET_KEY }}
-          branch: ${{ github.event.pull_request.head.ref }}
+          branch: ${{ needs.set-environment.outputs.branch }}
           clusterName: ${{ vars.CLUSTER_NAME }}
           environment: ${{ vars.ENVIRONMENT_NAME }}
           repoUrl: ${{ github.repository }}
@@ -99,7 +100,7 @@ jobs:
           awsDynamoDBTable: ${{ vars.AWS_DYNAMODB_TABLE }}
           awsRegion: ${{ vars.AWS_REGION }}
           awsSecretAccessKey: ${{ secrets.AWS_SECRET_KEY }}
-          branch: ${{ github.event.pull_request.head.ref }}
+          branch: ${{ needs.set-environment.outputs.branch }}
           clusterName: ${{ vars.CLUSTER_NAME }}
           environment: ${{ vars.ENVIRONMENT_NAME }}
           repoUrl: ${{ github.repository }}
