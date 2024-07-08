@@ -70,7 +70,7 @@ jobs:
           awsDynamoDBTable: ${{ vars.AWS_DYNAMODB_TABLE }}
           awsRegion: ${{ vars.AWS_REGION }}
           awsSecretAccessKey: ${{ secrets.AWS_SECRET_KEY }}
-          branch: ${{ github.ref_name }}
+          branch: ${{ github.event.pull_request.head.ref }}
           clusterName: ${{ vars.CLUSTER_NAME }}
           environment: ${{ vars.ENVIRONMENT_NAME }}
           repoUrl: ${{ github.repository }}
@@ -99,7 +99,7 @@ jobs:
           awsDynamoDBTable: ${{ vars.AWS_DYNAMODB_TABLE }}
           awsRegion: ${{ vars.AWS_REGION }}
           awsSecretAccessKey: ${{ secrets.AWS_SECRET_KEY }}
-          branch: ${{ github.ref_name }}
+          branch: ${{ github.event.pull_request.head.ref }}
           clusterName: ${{ vars.CLUSTER_NAME }}
           environment: ${{ vars.ENVIRONMENT_NAME }}
           repoUrl: ${{ github.repository }}
