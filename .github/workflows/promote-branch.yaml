@@ -40,6 +40,8 @@ jobs:
         run: |
           git rm -rf terraform/prod/*
           git rm -rf argocd/prod/*
+          mkdir -p terraform/prod
+          mkdir -p argocd/prod
 
       - name: Copy files from dev to prod
         run: |
