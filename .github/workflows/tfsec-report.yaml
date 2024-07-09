@@ -26,17 +26,17 @@ jobs:
           persist-credentials: false
 
       - name: Run tfsec
-        uses: aquasecurity/tfsec-sarif-action@v0.1.0
+        uses: aquasecurity/tfsec-sarif-action@v0.1.4
         with:
-          sarif_file: tfsec_${{ github.sha }}_${{ github.head_ref || github.ref_name }}.sarif
+          sarif_file: tfsec_${{ github.head_ref || github.ref_name }}_${{ github.sha }}.sarif
 
       - name: Upload SARIF file to GitHub Security tab
-        uses: github/codeql-action/upload-sarif@v1
+        uses: github/codeql-action/upload-sarif@v3
         with:
-          sarif_file: tfsec_${{ github.sha }}_${{ github.head_ref || github.ref_name }}.sarif
+          sarif_file: tfsec_${{ github.head_ref || github.ref_name }}_${{ github.sha }}.sarif
 
       - name: Upload SARIF file as artifact
         uses: actions/upload-artifact@v3
         with:
-          name: tfsec-sarif-${{ github.sha }}-${{ github.head_ref || github.ref_name }}
-          path: tfsec_${{ github.sha }}_${{ github.head_ref || github.ref_name }}.sarif
+          name: tfsec-sarif-${{ github.head_ref || github.ref_name }}-${{ github.sha }}
+          path: tfsec_${{ github.head_ref || github.ref_name }}_${{ github.sha }}.sarif
