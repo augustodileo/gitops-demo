@@ -72,7 +72,7 @@ runs:
             -var 'applications_list=${{ inputs.applicationsList }}' \
             -var "cluster_name=${{ inputs.clusterName }}" \
             -var "kubeconfig_path=${{ inputs.kubeconfigPath }}" \
-            -var "path=argocd/${{ inputs.environment }}" \
+            -var "path=argocd" \
             -var "repo_url=${{ inputs.repoUrl }}" \
             -var "target_revision=${{ inputs.branch }}"
           exit_code=$?
