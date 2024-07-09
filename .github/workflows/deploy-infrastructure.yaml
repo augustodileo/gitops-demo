@@ -1,12 +1,12 @@
 name: Deploy Infrastructure
 
-#on:
-#  push:
-#    branches:
-#      - main
-#    paths:
-#      - 'terraform/**'
-#      - 'argocd/**'
+on:
+  push:
+    branches:
+      - non-existing-branch
+    paths:
+      - 'terraform/**'
+      - 'argocd/**'
 
 jobs:
   set-environment:

@@ -1,56 +1,18 @@
 name: Test Infrastructure
 
 on:
-  workflow_dispatch:
-    inputs:
-      environment:
-        description: 'Deployment environment (e.g., dev, prod)'
-        required: true
-        type: choice
-        options:
-          - dev
-          - prod
-
   pull_request:
     branches:
-      - main
+      - prod
+      - dev
     paths:
       - 'argocd/**'
       - 'terraform/**'
 
 jobs:
-  set-environment:
-    runs-on: ubuntu-latest
-    outputs:
-      branch: ${{ steps.set-environment.outputs.branch }}
-      environment: ${{ steps.set-environment.outputs.environment }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Set environment
-        id: set-environment
-        run: |
-          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
-            echo "branch=${{ github.ref_name }}" >> $GITHUB_OUTPUT
-            echo "environment=${{ inputs.environment }}" >> $GITHUB_OUTPUT
-          else
-            MODIFIED_FOLDERS=$(git diff --name-only origin/main...HEAD | awk -F'/' '{print $1"/"$2}' | sort | uniq)
-            echo "MODIFIED_FOLDERS=$MODIFIED_FOLDERS"
-            if echo "$MODIFIED_FOLDERS" | grep -q 'terraform/prod\|argocd/prod'; then
-              echo "environment=prod" >> $GITHUB_OUTPUT
-            else
-              echo "environment=dev" >> $GITHUB_OUTPUT
-            fi
-            echo "branch=${{ github.event.pull_request.head.ref }}" >> $GITHUB_OUTPUT
-          fi
-  
   deployment:
-    needs: set-environment
     runs-on: ubuntu-latest
-    environment: ${{ needs.set-environment.outputs.environment }}
+    environment: ${{ github.base_ref }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -62,7 +24,7 @@ jobs:
 
       - name: Find Application Directories
         run: |
-          applications=$(find argocd/${{ vars.ENVIRONMENT_NAME }} -type f -name 'application.yaml' -exec dirname {} \; | xargs -I {} basename {})
+          applications=$(find argocd -type f -name 'application.yaml' -exec dirname {} \; | xargs -I {} basename {})
           echo "applicationsList=[$(echo $applications | sed 's/\([^ ]*\)/"\1"/g' | sed 's/ /,/g')]" >> $GITHUB_ENV
         shell: bash
 
@@ -76,11 +38,11 @@ jobs:
           awsDynamoDBTable: ${{ vars.AWS_DYNAMODB_TABLE }}
           awsRegion: ${{ vars.AWS_REGION }}
           awsSecretAccessKey: ${{ secrets.AWS_SECRET_KEY }}
-          branch: ${{ needs.set-environment.outputs.branch }}
+          branch: ${{ github.head_ref }}
           clusterName: ${{ vars.CLUSTER_NAME }}
           environment: ${{ vars.ENVIRONMENT_NAME }}
           repoUrl: ${{ github.repository }}
-          workingDirectory: "terraform/${{ vars.ENVIRONMENT_NAME }}/main"
+          workingDirectory: "terraform/main"
 
       - name: Install kubectl
         uses: azure/setup-kubectl@v3
@@ -105,8 +67,8 @@ jobs:
           awsDynamoDBTable: ${{ vars.AWS_DYNAMODB_TABLE }}
           awsRegion: ${{ vars.AWS_REGION }}
           awsSecretAccessKey: ${{ secrets.AWS_SECRET_KEY }}
-          branch: ${{ needs.set-environment.outputs.branch }}
+          branch: ${{ github.head_ref }}
           clusterName: ${{ vars.CLUSTER_NAME }}
           environment: ${{ vars.ENVIRONMENT_NAME }}
           repoUrl: ${{ github.repository }}
-          workingDirectory: "terraform/${{ vars.ENVIRONMENT_NAME }}/main"
+          workingDirectory: "terraform/main"
