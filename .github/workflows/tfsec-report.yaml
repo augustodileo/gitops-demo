@@ -3,12 +3,12 @@ name: TFsec Report
 on:
   push:
     branches:
-      - main
-      - develop
+      - prod
+      - dev
   pull_request:
     branches:
-      - main
-      - develop
+      - prod
+      - dev
 
 jobs:
   tfsec:
