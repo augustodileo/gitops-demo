@@ -27,7 +27,7 @@ jobs:
         uses: aquasecurity/trivy-action@master
         with:
           scan-type: fs
-          scan-ref: ./terraform  # Specify the directory containing Terraform files
+          scan-ref: ./terraform/main  # Specify the directory containing Terraform files
           format: sarif
           output: trivy.sarif
 
