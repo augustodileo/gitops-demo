@@ -53,7 +53,7 @@ runs:
       env:
         AWS_ACCESS_KEY_ID: ${{ inputs.awsAccessKeyId }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.awsSecretAccessKey }}
-        BACKEND_KEY: "gitops-demo/${{ inputs.environment }}/${{ inputs.branch }}/application-key.tfstate"
+        BACKEND_KEY: "gitops-demo/${{ inputs.environment }}/${{ inputs.branch }}/gitops-demo-key.tfstate"
       working-directory: ${{ inputs.workingDirectory }}
       shell: bash
 
