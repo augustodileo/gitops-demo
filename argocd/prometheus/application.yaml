@@ -7,7 +7,7 @@ spec:
   project: default
   source:
     repoURL: https://prometheus-community.github.io/helm-charts
-    targetRevision: "15.4.1" # Specify the version you want to deploy
+    targetRevision: "15.4.1"
     chart: kube-prometheus-stack
   destination:
     server: https://kubernetes.default.svc

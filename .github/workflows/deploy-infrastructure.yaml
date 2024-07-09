@@ -3,51 +3,57 @@ name: Deploy Infrastructure
 on:
   push:
     branches:
-      - non-existing-branch
+      - not-prod
+      - not-dev
     paths:
       - 'terraform/**'
       - 'argocd/**'
 
 jobs:
-  set-environment:
-    runs-on: ubuntu-latest
-    outputs:
-      environment: ${{ steps.set-environment.outputs.environment }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set environment
-        id: set-environment
-        run: |
-          if git diff --name-only origin/main...HEAD | grep -q 'terraform/cluster-creation/prod\|terraform/application/prod'; then
-            echo "::set-output name=environment::prod"
-          else
-            echo "::set-output name=environment::dev"
-          fi
-  
   deployment:
     needs: set-environment
     runs-on: ubuntu-latest
-    environment: ${{ needs.set-environment.outputs.environment }}
+    environment: ${{ github.ref_name }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Create Cluster
-        id: create-cluster
-        uses: ./.github/actions/create-cluster.yaml
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v3.1.1
         with:
-          clusterName: ${{ inputs.clusterName }}
+          terraform_wrapper: false
 
-      - name: Create Application
-        id: create-application
-        uses: ./.github/actions/create-application.yaml
+      - name: Find Application Directories
+        run: |
+          applications=$(find argocd -type f -name 'application.yaml' -exec dirname {} \; | xargs -I {} basename {})
+          echo "applicationsList=[$(echo $applications | sed 's/\([^ ]*\)/"\1"/g' | sed 's/ /,/g')]" >> $GITHUB_ENV
+        shell: bash
+
+      - name: Create Infrastructure
+        id: create-infrastructure
+        uses: ./.github/actions/create-infrastructure
         with:
-          kubeconfigContent: ${{ steps.create-cluster.outputs.kubeconfigContent }}
+          applicationsList: ${{ env.applicationsList }}
+          awsAccessKeyId: ${{ vars.AWS_ACCESS_KEY_ID }}
+          awsBucket: ${{ vars.AWS_BUCKET }}
+          awsDynamoDBTable: ${{ vars.AWS_DYNAMODB_TABLE }}
+          awsRegion: ${{ vars.AWS_REGION }}
+          awsSecretAccessKey: ${{ secrets.AWS_SECRET_KEY }}
+          branch: ${{ github.ref_name }}
+          clusterName: ${{ vars.CLUSTER_NAME }}
+          environment: ${{ vars.ENVIRONMENT_NAME }}
+          repoUrl: ${{ github.repository }}
+          workingDirectory: "terraform/main"
+
+      - name: Install kubectl
+        uses: azure/setup-kubectl@v3
+        with:
+          version: 'v1.23.4'
 
       - name: Run tests
         id: run-tests
-        run: kubectl get pods -n default
+        run: |
+          sleep 60
+          kubectl get namespaces
         env:
-          KUBECONFIG: ${{ steps.create-cluster.outputs.kubeconfigContent }}
+          KUBECONFIG: ${{ steps.create-infrastructure.outputs.kubeconfigPath }}
