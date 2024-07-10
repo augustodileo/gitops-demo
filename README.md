@@ -12,6 +12,7 @@ This repository demonstrates a GitOps workflow using Terraform and GitHub Action
   - [Environment Configuration](#environment-configuration)
   - [GitHub Actions / Workflows](#github-actions--workflows)
     - [Repository Structure / Behavior](#repository-structure--behavior)
+    - [Development and Deployment Process](#development-and-deployment-process)
     - [Workflows](#workflows)
   - [Contributing](#contributing)
 
@@ -153,61 +154,56 @@ Configure environments in your GitHub repository settings. For each environment 
 │   ├── promote-branch.yaml
 │   └── test-infrastructure.yaml
 argocd
-├── dev
-│   ├── app1
-│   └── app2
-├── prod
-│   ├── app1
-│   └── app2
+├── grafana
+├── ingress-nginx
+├── prometheus
 terraform
-├── dev
-│   ├── main
-├── prod
-│   ├── main
+├── main
 .gitignore
 README.md
 ```
 
-The repository is organized by technology and environment, ensuring each part of the stack can operate independently. This structure allows for clear visibility of what is being deployed in each cluster.
 
-- **Terraform Folder**: Contains all Infrastructure as Code (IaC) configurations for creating and managing infrastructure.
-- **ArgoCD Folder**: Houses application manifests that Terraform uses to deploy applications via the ArgoCD provider.
+The repository is structured with separate folders for each technology and uses branches to manage different environments, promoting clear separation and visibility of deployments.
 
-Changes to the repository follow a controlled and streamlined process:
+- **Terraform Folder**: Contains all Infrastructure as Code (IaC) configurations for infrastructure management.
+- **ArgoCD Folder**: Contains application manifests deployed via the ArgoCD provider.
 
-- **Branch Creation and PR:**
-  - Modifications to the repository should be made in branches only modifying the `dev` folders.
-  - When a Pull Request (PR) is opened, the `test-infrastructure` workflow is triggered. This workflow tests the infrastructure changes by deploying a temporary infrastructure for your specific branch and environment.
+### Development and Deployment Process
+
+- **Branch Management**:
+  - Development is primarily done in the `dev` branch, where all feature branches should originate and be merged back after initial testing.
+  - Stable releases are managed through the `prod` branch, which receives merged updates from `dev` through a controlled pull request process after thorough testing.
 
 - **Testing and Promotion:**
-  - If the tests in the `test-infrastructure` workflow pass, you will be able to merge the PR, and when merged the `promote-branch` workflow will be triggered. This workflow creates a new branch and PR to promote the changes to the `prod` environment.
-  - The `test-infrastructure` workflow is triggered again to test the infrastructure, since now will be modifying the `prod` folders, will test the `prod` environment.
+  - After developing a new feature, you should create a pull request (PR) to the `dev` branch. This PR will trigger automated tests and security scans to ensure the new changes meet all necessary quality and security standards. Once the PR passes all checks and receives approval, you can merge it into `dev`.
+  - To promote changes to the `prod` environment, create a PR from `dev` to `prod`. This will launch another round of tests, this time simulating the production environment to verify that the changes perform as expected under production conditions before final approval and merging.
 
-- **Deploying to Main:**
+- **Deploying to Prod:**
   - There are two persistent infrastructures that are not cleaned up:
     - `dev`
     - `prod`
-  - The `deploy-infrastructure` workflow runs whenever there is a push to the `main` branch. This workflow performs a `terraform init`, `plan`, and `apply` for the respective environment (`dev` or `prod`), ensuring that the state is saved in the corresponding S3 path. This represents the actual infrastructure of the project.
+  - The `deploy-infrastructure` workflow runs whenever there is a push to the `dev` or `prod` branch. This workflow performs a `terraform init`, `plan`, and `apply` for the respective environment (`dev` or `prod`), ensuring that the state is saved in the corresponding S3 path. This represents the actual infrastructure of the project.
 
-**NOTE:** Each branch has its own state in the bucket, ensuring isolated deployment and testing of the infrastructure. When testing the infrastructure on a PR that modifies `prod` folders, it does not affect the actual production infrastructure. The `dev` and `prod` infrastructures are only modified when changes are pushed to the `main` branch touching their respective folders, triggering the `deploy-infrastructure` workflow.
+**NOTE:** Each branch maintains its own state, ensuring deployments and tests are isolated to their respective environments. This isolation helps prevent unintended interactions between/to development and production infrastructures while doing PRs.
 
 ### Workflows
 
 - **Create Infrastructure Action:**
    - **Workflow File**: `.github/actions/create-infrastructure.yml`
-   - **Description**: Initializes and applies Terraform configuration for the terraform/${{ github.environment }}/main folder.
+   - **Description**: Initializes and applies Terraform configuration for the terraform/main folder.
    - 
 -  **Destroy Infrastructure Action:**
    - **Workflow File**: `.github/actions/destroy-infrastructure.yml`
-   - **Description**: Initializes and destroys Terraform configuration for the terraform/${{ github.environment }}/main folder.
-  
--  **Promote Branch Workflow:**
-   - **Workflow File**: `.github/workflows/promote-branch.yml`
-   - **Description**: Creates a new branch and PR to promote changes from `dev` to `prod` after successful tests.
+   - **Description**: Initializes and destroys Terraform configuration for the terraform/main folder.
 
 -  **Test Infrastructure Workflow:**
    - **Workflow File**: `.github/workflows/test-infrastructure.yml`
    - **Description**: Orchestrates the entire process of creating infrastructure, deploying the applications, running tests, and cleaning up resources. It includes calls to the Create Infrastructure and Destroy Infrastructure actions.
+
+- **Trivy Security Scanning Workflow:**
+   - **Workflow File**: `.github/workflows/trivy-report.yml`
+   - **Description**: Scans Terraform files and other filesystem objects in the repository for security vulnerabilities using Trivy.
 
 ## Contributing
 

@@ -5,9 +5,6 @@ on:
     branches:
       - not-prod
       - not-dev
-    paths:
-      - 'terraform/**'
-      - 'argocd/**'
 
 jobs:
   deployment:
