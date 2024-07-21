@@ -1,4 +1,4 @@
-name: Trivy Report
+name: Trivy
 
 on:
   push:

@@ -1,3 +1,9 @@
+Prod
+[![Trivy Report](https://github.com/augustodileo/gitops-demo/actions/workflows/trivy-report.yaml/badge.svg?branch=prod)](https://github.com/augustodileo/gitops-demo/actions/workflows/trivy-report.yaml)
+
+Dev
+[![Trivy Report](https://github.com/augustodileo/gitops-demo/actions/workflows/trivy-report.yaml/badge.svg?branch=dev)](https://github.com/augustodileo/gitops-demo/actions/workflows/trivy-report.yaml)
+
 # GitOps Demo Repository
 
 This repository demonstrates a GitOps workflow using Terraform and GitHub Actions to manage the creation and deployment of Kubernetes clusters and applications.
@@ -151,8 +157,8 @@ Configure environments in your GitHub repository settings. For each environment 
 │   ├── destroy-infrastructure
 ├── workflows
 │   ├── deploy-infrastructure.yaml
-│   ├── promote-branch.yaml
-│   └── test-infrastructure.yaml
+│   ├── test-infrastructure.yaml
+│   └── trivy-report.yaml
 argocd
 ├── grafana
 ├── ingress-nginx
